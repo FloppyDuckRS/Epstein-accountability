@@ -1360,14 +1360,14 @@ export default function EpsteinIndex() {
 
   // ═══ NAV ═══
   const Nav = () => (
-    <header style={{ borderBottom: "1px solid #1a1a1e", padding: "8px 16px", display: "flex", alignItems: "center", justifyContent: "space-between", background: "#0d0d10", position: "sticky", top: 0, zIndex: 50 }}>
-      <div style={{ display: "flex", alignItems: "center", gap: 12, flexWrap: "wrap" }}>
-        <button onClick={() => setPage("landing")} style={{ background: "none", border: "none", cursor: "pointer", color: gold, fontFamily: serif, fontSize: 15, fontWeight: 900 }}>The Epstein Index</button>
+    <header className="main-nav" style={{ borderBottom: "1px solid #1a1a1e", padding: "8px 16px", display: "flex", alignItems: "center", justifyContent: "space-between", background: "#0d0d10", position: "sticky", top: 0, zIndex: 50 }}>
+      <div style={{ display: "flex", alignItems: "center", gap: 12, flexWrap: "wrap", overflow: "auto" }} className="nav-links">
+        <button onClick={() => { setPage("landing"); window.scrollTo(0, 0); }} style={{ background: "none", border: "none", cursor: "pointer", color: gold, fontFamily: serif, fontSize: 15, fontWeight: 900, flexShrink: 0 }}>The Epstein Index</button>
         {[["profiles","Profiles"],["money","Money"],["mastertl","Timeline"],["network","Network"],["coconspirators","Co-Conspirators"],["govfailures","Gov Failures"],["contradictions","Contradictions"],["consequences","Consequences"],["unanswered","Unanswered"],["congress","Congress"],["corrections","Log"],["method","Method"],["sources","Sources"],["victims","Victims"],["accountability","Scorecard"],["juxtapose","While They Smiled"],["action","Take Action"],["sealed","Sealed"],["stillinpower","In Power"],["corporate","Corporate"]].map(([p, l]) => (
-          <button key={p} onClick={() => setPage(p)} style={{ padding: "3px 8px", background: page === p ? "rgba(201,162,39,0.1)" : "none", border: "none", color: page === p ? gold : "#666", cursor: "pointer", fontFamily: sans, fontSize: 10, borderRadius: 3, fontWeight: page === p ? 600 : 400 }}>{l}</button>
+          <button key={p} onClick={() => { setPage(p); window.scrollTo(0, 0); }} style={{ padding: "3px 8px", background: page === p ? "rgba(201,162,39,0.1)" : "none", border: "none", color: page === p ? gold : "#666", cursor: "pointer", fontFamily: sans, fontSize: 10, borderRadius: 3, fontWeight: page === p ? 600 : 400, flexShrink: 0 }}>{l}</button>
         ))}
       </div>
-      <div style={{ fontFamily: mono, fontSize: 9, color: "#444" }}>{keys.length} profiles · {totalEvents}+ events</div>
+      <div style={{ fontFamily: mono, fontSize: 9, color: "#444", flexShrink: 0 }} className="nav-stats">{keys.length} profiles · {totalEvents}+ events</div>
     </header>
   );
 
@@ -2271,18 +2271,18 @@ export default function EpsteinIndex() {
         onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
         style={{ 
           display: "none",
-          "@media (max-width: 768px)": { display: "block" },
           position: "fixed",
-          top: 60,
-          left: 16,
+          top: 54,
+          left: 8,
           zIndex: 100,
           background: gold,
           border: "none",
           borderRadius: 4,
-          padding: "8px 12px",
+          padding: "6px 10px",
           cursor: "pointer",
-          fontSize: 18,
-          color: "#000"
+          fontSize: 16,
+          color: "#000",
+          boxShadow: "0 2px 8px rgba(0,0,0,0.3)"
         }}
         className="mobile-menu-btn"
       >
@@ -2293,6 +2293,23 @@ export default function EpsteinIndex() {
         @media (max-width: 768px) {
           .mobile-menu-btn {
             display: block !important;
+          }
+          .main-nav {
+            padding: 6px 8px !important;
+          }
+          .nav-links {
+            flex-wrap: nowrap !important;
+            overflow-x: auto !important;
+            overflow-y: hidden !important;
+            -webkit-overflow-scrolling: touch;
+            scrollbar-width: none; /* Firefox */
+            -ms-overflow-style: none; /* IE/Edge */
+          }
+          .nav-links::-webkit-scrollbar {
+            display: none; /* Chrome/Safari */
+          }
+          .nav-stats {
+            display: none !important;
           }
           .sidebar {
             position: fixed !important;
@@ -2326,7 +2343,7 @@ export default function EpsteinIndex() {
         <aside className="sidebar" style={{ width: 210, borderRight: "1px solid #1a1a1e", background: "#0d0d10", overflowY: "auto", flexShrink: 0, padding: 10 }}>
           <input value={search} onChange={e => setSearch(e.target.value)} placeholder="Search..." style={{ width: "100%", padding: "7px 9px", background: "#111", border: "1px solid #222", borderRadius: 4, color: "#ddd", fontFamily: sans, fontSize: 11, marginBottom: 8 }} />
           {filtered.map(k => (
-            <button key={k} onClick={() => { go(k); setMobileMenuOpen(false); }} style={{ display: "flex", alignItems: "center", gap: 8, width: "100%", padding: "6px 8px", border: ap === k ? `1px solid ${gold}` : "1px solid transparent", background: ap === k ? "#1a1a10" : "transparent", color: ap === k ? gold : "#999", borderRadius: 4, cursor: "pointer", textAlign: "left", fontFamily: sans, fontSize: 11, marginBottom: 2 }}>
+            <button key={k} onClick={() => { go(k); setMobileMenuOpen(false); window.scrollTo(0, 0); }} style={{ display: "flex", alignItems: "center", gap: 8, width: "100%", padding: "6px 8px", border: ap === k ? `1px solid ${gold}` : "1px solid transparent", background: ap === k ? "#1a1a10" : "transparent", color: ap === k ? gold : "#999", borderRadius: 4, cursor: "pointer", textAlign: "left", fontFamily: sans, fontSize: 11, marginBottom: 2 }}>
               <ProfileImg id={k} size={24} />
               <div>
                 <div style={{ fontWeight: 600, fontSize: 11 }}>{P[k].name}</div>
