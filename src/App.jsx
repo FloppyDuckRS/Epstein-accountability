@@ -1135,6 +1135,7 @@ export default function EpsteinIndex() {
   const [comp, setComp] = useState(null);
   const [showDisc, setShowDisc] = useState(false);
   const [showSubmit, setShowSubmit] = useState(false);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [imgErr, setImgErr] = useState({});
   const [moneyMin, setMoneyMin] = useState(0);
   const [mtYear, setMtYear] = useState("all");
@@ -2264,11 +2265,68 @@ export default function EpsteinIndex() {
   return (
     <div style={{ height: "100vh", background: "#0a0a0c", color: "#e2e2e8", fontFamily: serif, display: "flex", flexDirection: "column" }}>
       <style>{CSS}</style><Nav />
+      
+      {/* Mobile Menu Button */}
+      <button 
+        onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+        style={{ 
+          display: "none",
+          "@media (max-width: 768px)": { display: "block" },
+          position: "fixed",
+          top: 60,
+          left: 16,
+          zIndex: 100,
+          background: gold,
+          border: "none",
+          borderRadius: 4,
+          padding: "8px 12px",
+          cursor: "pointer",
+          fontSize: 18,
+          color: "#000"
+        }}
+        className="mobile-menu-btn"
+      >
+        ☰
+      </button>
+
+      <style>{`
+        @media (max-width: 768px) {
+          .mobile-menu-btn {
+            display: block !important;
+          }
+          .sidebar {
+            position: fixed !important;
+            left: ${mobileMenuOpen ? '0' : '-250px'} !important;
+            top: 0 !important;
+            height: 100vh !important;
+            z-index: 99 !important;
+            transition: left 0.3s ease !important;
+            width: 250px !important;
+          }
+          .sidebar-overlay {
+            display: ${mobileMenuOpen ? 'block' : 'none'} !important;
+            position: fixed !important;
+            inset: 0 !important;
+            background: rgba(0,0,0,0.7) !important;
+            z-index: 98 !important;
+          }
+          .main-content {
+            width: 100% !important;
+          }
+        }
+      `}</style>
+
+      {/* Overlay for mobile */}
+      <div 
+        className="sidebar-overlay"
+        onClick={() => setMobileMenuOpen(false)}
+      />
+      
       <div style={{ display: "flex", flex: 1, overflow: "hidden" }}>
-        <aside style={{ width: 210, borderRight: "1px solid #1a1a1e", background: "#0d0d10", overflowY: "auto", flexShrink: 0, padding: 10 }}>
+        <aside className="sidebar" style={{ width: 210, borderRight: "1px solid #1a1a1e", background: "#0d0d10", overflowY: "auto", flexShrink: 0, padding: 10 }}>
           <input value={search} onChange={e => setSearch(e.target.value)} placeholder="Search..." style={{ width: "100%", padding: "7px 9px", background: "#111", border: "1px solid #222", borderRadius: 4, color: "#ddd", fontFamily: sans, fontSize: 11, marginBottom: 8 }} />
           {filtered.map(k => (
-            <button key={k} onClick={() => go(k)} style={{ display: "flex", alignItems: "center", gap: 8, width: "100%", padding: "6px 8px", border: ap === k ? `1px solid ${gold}` : "1px solid transparent", background: ap === k ? "#1a1a10" : "transparent", color: ap === k ? gold : "#999", borderRadius: 4, cursor: "pointer", textAlign: "left", fontFamily: sans, fontSize: 11, marginBottom: 2 }}>
+            <button key={k} onClick={() => { go(k); setMobileMenuOpen(false); }} style={{ display: "flex", alignItems: "center", gap: 8, width: "100%", padding: "6px 8px", border: ap === k ? `1px solid ${gold}` : "1px solid transparent", background: ap === k ? "#1a1a10" : "transparent", color: ap === k ? gold : "#999", borderRadius: 4, cursor: "pointer", textAlign: "left", fontFamily: sans, fontSize: 11, marginBottom: 2 }}>
               <ProfileImg id={k} size={24} />
               <div>
                 <div style={{ fontWeight: 600, fontSize: 11 }}>{P[k].name}</div>
@@ -2296,7 +2354,7 @@ export default function EpsteinIndex() {
           </div>
         </aside>
 
-        <main style={{ flex: 1, overflowY: "auto" }}>
+        <main className="main-content" style={{ flex: 1, overflowY: "auto" }}>
           <div style={{ padding: "20px 24px 0", borderBottom: "1px solid #1a1a1e" }}>
             <div style={{ display: "flex", gap: 14, alignItems: "flex-start", marginBottom: 12 }}>
               <ProfileImg id={ap} size={52} />
