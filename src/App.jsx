@@ -1324,16 +1324,32 @@ export default function EpsteinIndex() {
             <div style={{ maxWidth: 480, background: "#141418", border: "1px solid #333", borderRadius: 8, padding: 28 }}>
               <h2 style={{ fontSize: 16, fontWeight: 700, marginBottom: 6, fontFamily: sans }}>Submit a Sourced Finding</h2>
               <p style={{ fontSize: 11, color: "#888", fontFamily: sans, marginBottom: 16 }}>All submissions require a verifiable primary source and go through editorial review.</p>
-              {["Profile Name *", "Event Description *", "Date *", "Primary Source URL *", "Your Handle (optional)"].map((label, i) => (
-                <div key={i} style={{ marginBottom: 10 }}>
-                  <label style={{ fontSize: 11, color: "#666", fontFamily: sans, display: "block", marginBottom: 3 }}>{label}</label>
-                  <input style={{ width: "100%", padding: 7, background: "#1a1a1e", border: "1px solid #333", borderRadius: 4, color: "#ddd", fontFamily: sans, fontSize: 12 }} />
+              <form action="https://formspree.io/f/mjgekgzg" method="POST">
+                <div style={{ marginBottom: 10 }}>
+                  <label style={{ fontSize: 11, color: "#666", fontFamily: sans, display: "block", marginBottom: 3 }}>Profile Name *</label>
+                  <input name="profile" required style={{ width: "100%", padding: 7, background: "#1a1a1e", border: "1px solid #333", borderRadius: 4, color: "#ddd", fontFamily: sans, fontSize: 12 }} />
                 </div>
-              ))}
-              <div style={{ display: "flex", gap: 10, marginTop: 12 }}>
-                <button onClick={() => { alert("Submission received for review. Thank you."); setShowSubmit(false); }} style={{ padding: "8px 20px", background: gold, color: "#000", border: "none", borderRadius: 4, cursor: "pointer", fontFamily: sans, fontWeight: 600, fontSize: 13 }}>Submit</button>
-                <button onClick={() => setShowSubmit(false)} style={{ padding: "8px 20px", background: "none", color: "#888", border: "1px solid #333", borderRadius: 4, cursor: "pointer", fontFamily: sans, fontSize: 12 }}>Cancel</button>
-              </div>
+                <div style={{ marginBottom: 10 }}>
+                  <label style={{ fontSize: 11, color: "#666", fontFamily: sans, display: "block", marginBottom: 3 }}>Event Description *</label>
+                  <textarea name="description" required style={{ width: "100%", padding: 7, background: "#1a1a1e", border: "1px solid #333", borderRadius: 4, color: "#ddd", fontFamily: sans, fontSize: 12, minHeight: 80 }} />
+                </div>
+                <div style={{ marginBottom: 10 }}>
+                  <label style={{ fontSize: 11, color: "#666", fontFamily: sans, display: "block", marginBottom: 3 }}>Date *</label>
+                  <input name="date" required style={{ width: "100%", padding: 7, background: "#1a1a1e", border: "1px solid #333", borderRadius: 4, color: "#ddd", fontFamily: sans, fontSize: 12 }} />
+                </div>
+                <div style={{ marginBottom: 10 }}>
+                  <label style={{ fontSize: 11, color: "#666", fontFamily: sans, display: "block", marginBottom: 3 }}>Primary Source URL *</label>
+                  <input name="source" type="url" required style={{ width: "100%", padding: 7, background: "#1a1a1e", border: "1px solid #333", borderRadius: 4, color: "#ddd", fontFamily: sans, fontSize: 12 }} />
+                </div>
+                <div style={{ marginBottom: 10 }}>
+                  <label style={{ fontSize: 11, color: "#666", fontFamily: sans, display: "block", marginBottom: 3 }}>Your Handle (optional)</label>
+                  <input name="handle" style={{ width: "100%", padding: 7, background: "#1a1a1e", border: "1px solid #333", borderRadius: 4, color: "#ddd", fontFamily: sans, fontSize: 12 }} />
+                </div>
+                <div style={{ display: "flex", gap: 10, marginTop: 12 }}>
+                  <button type="submit" style={{ padding: "8px 20px", background: gold, color: "#000", border: "none", borderRadius: 4, cursor: "pointer", fontFamily: sans, fontWeight: 600, fontSize: 13 }}>Submit</button>
+                  <button type="button" onClick={() => setShowSubmit(false)} style={{ padding: "8px 20px", background: "none", color: "#888", border: "1px solid #333", borderRadius: 4, cursor: "pointer", fontFamily: sans, fontSize: 12 }}>Cancel</button>
+                </div>
+              </form>
             </div>
           </div>
         )}
