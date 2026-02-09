@@ -1197,7 +1197,7 @@ export default function EpsteinIndex() {
   .mobile-sidebar-btn{display:flex !important}
 }`;
 
-  const totalActive = MONEY_TOTALS.length;
+
   const totalEvents = Object.values(P).reduce((a, p) => a + p.tl.length, 0);
 
   // ═══ LANDING ═══
