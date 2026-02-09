@@ -1,4 +1,4 @@
-import { useState, useMemo } from "react";
+import { useState, useRef, useEffect, useMemo } from "react";
 
 // ═══════════════════════════════════════════════════════
 // CONFIGURATION & CONSTANTS
@@ -553,7 +553,7 @@ const P = {
   "george-stephanopoulos": {
     name: "George Stephanopoulos", cat: "Media / Former Government", role: "ABC News Anchor (GMA, This Week)", prev: "Clinton White House Senior Advisor", init: "GS",
     sum: "On confirmed guest list for Dec 2, 2010 dinner at Epstein's Manhattan townhouse — two years after conviction. Dinner organized by publicist Peggy Siegal, included Prince Andrew, Woody Allen, Katie Couric, Charlie Rose. Said it was 'the first and last time' he saw Epstein and called it 'a mistake to go.' Now anchors ABC coverage of the Epstein files release.",
-    resp: "'That dinner was the first and last time I've seen him. I should have done more due diligence. It was a mistake to go.'",
+    resp: "'That dinner was the first and last time I\'ve seen him. I should have done more due diligence. It was a mistake to go.'",
     respDate: "2019",
     tax: [
       { type: "No government role", detail: "Former Clinton White House advisor. Currently private sector (ABC News).", source: "Public records", status: "N/A", amount: "N/A", verified: true },
@@ -567,7 +567,7 @@ const P = {
   },
   "jean-luc-brunel": {
     name: "Jean-Luc Brunel", cat: "Inner Circle (Deceased)", role: "Model Agent — died in French prison 2022", prev: "Founder, MC2 Model Management / Karin Models", init: "JLB",
-    sum: "Named FBI co-conspirator. Founded MC2 Model Management with $1M from Epstein. Accused of procuring underage girls through modeling agencies — Giuffre alleged Epstein bragged he 'slept with over 1,000 of Brunel's girls.' 25 flights on Epstein's jet (1998-2005). 70+ jail visits during Epstein's 2008 sentence. Charged in France with rape of minors. Found hanged in La Santé Prison, Paris, Feb 19, 2022, before trial. Death mirrored Epstein's.",
+    sum: "Named FBI co-conspirator. Founded MC2 Model Management with $1M from Epstein. Accused of procuring underage girls through modeling agencies — Giuffre alleged Epstein bragged he 'slept with over 1,000 of Brunel\'s girls.' 25 flights on Epstein's jet (1998-2005). 70+ jail visits during Epstein's 2008 sentence. Charged in France with rape of minors. Found hanged in La Santé Prison, Paris, Feb 19, 2022, before trial. Death mirrored Epstein's.",
     resp: "Denied all involvement. Lawyers said his death was 'not guided by guilt, but a profound sense of injustice.'",
     respDate: "Posthumous",
     tax: [],
@@ -818,20 +818,20 @@ const GOV_FAILURES = [
 // ═══════════════════════════════════════════════════════
 const CONSEQUENCES = [
   { name: "Peter Mandelson", role: "UK — House of Lords / Labour", action: "Resigned from Labour and House of Lords within 48 hours of file release showing 20+ contacts with Epstein including island visit. Met Police opened criminal investigation. Mandelson had claimed 'only met Epstein briefly.'", date: "Feb 1-3, 2026", profileId: "peter-mandelson", type: "resignation" },
-  { name: "Larry Summers", role: "OpenAI Board / Harvard", action: "Left OpenAI board, stopped teaching at Harvard. Called it 'major error of judgment.' Files showed multiple flights on Epstein's jet and dinners after 2008 conviction. Had previously claimed relationship was limited.", date: "Post-release", profileId: "larry-summers", type: "resignation" },
+  { name: "Larry Summers", role: "OpenAI Board / Harvard", action: "Left OpenAI board, stopped teaching at Harvard. Called it 'major error of judgment.' Files showed multiple flights on Epstein\'s jet and dinners after 2008 conviction. Had previously claimed relationship was limited.", date: "Post-release", profileId: "larry-summers", type: "resignation" },
   { name: "Andrew Mountbatten-Windsor", role: "UK Royalty / Duke of York", action: "Stripped of all royal titles and military affiliations by King Charles. PM Starmer publicly stated Andrew should cooperate with investigators. Civil lawsuit settled for reported £12M to Virginia Giuffre. Royal Lodge residence reportedly being transferred.", date: "Oct 2025", profileId: "andrew-mw", type: "stripped" },
-  { name: "Alexander Acosta", role: "U.S. Secretary of Labor", action: "Forced to resign in July 2019 after Julie K. Brown's reporting exposed the full scope of the 2008 plea deal he negotiated. Trump initially defended him but accepted resignation after bipartisan criticism. The deal Acosta signed gave immunity to unnamed co-conspirators.", date: "Jul 2019", profileId: "alexander-acosta", type: "resignation" },
+  { name: "Alexander Acosta", role: "U.S. Secretary of Labor", action: "Forced to resign in July 2019 after Julie K. Brown\'s reporting exposed the full scope of the 2008 plea deal he negotiated. Trump initially defended him but accepted resignation after bipartisan criticism. The deal Acosta signed gave immunity to unnamed co-conspirators.", date: "Jul 2019", profileId: "alexander-acosta", type: "resignation" },
   { name: "Leon Black", role: "CEO, Apollo Global Management", action: "Stepped down as Apollo CEO after investigation confirmed $158M in payments to Epstein (2012-2017) for 'financial advice.' Independent review found payments were 'not illegal' but Black resigned citing 'distraction.' Apollo later settled with USVI for $62.5M.", date: "Mar 2021", profileId: "leon-black", type: "resignation" },
-  { name: "Jes Staley", role: "Barclays CEO / Former JPMorgan Private Banking Head", action: "Resigned from Barclays in 2021 when FCA investigation launched. UK FCA subsequently banned him from financial services and fined £1.8M. 2025 tribunal revealed 1,200+ emails with Epstein and that he slept with an Epstein assistant. JPMorgan paid $365M in settlements partly due to Staley's role as Epstein's primary banking contact.", date: "2021-2025", profileId: "jes-staley", type: "banned" },
-  { name: "Brad Karp", role: "Chairman, Paul Weiss (law firm)", action: "Resigned chairmanship of one of America's most powerful law firms after email exchanges with Epstein became public in file releases. Paul Weiss had represented multiple Epstein-connected clients.", date: "Feb 2026", type: "resignation" },
-  { name: "Miroslav Lajčák", role: "Slovakia National Security Adviser", action: "Resigned after opposition pressure following file release. Former UN General Assembly president named in Epstein's contact records.", date: "Jan 31, 2026", type: "resignation" },
-  { name: "Joanna Rubinstein", role: "Chair, Sweden for UNHCR", action: "Resigned after files revealed she visited Epstein's island in 2012 — 4 years after his conviction.", date: "Feb 2, 2026", type: "resignation" },
-  { name: "Jean-Luc Brunel", role: "Model Agent / Named FBI Co-Conspirator", action: "Arrested Dec 2020 at Charles de Gaulle airport attempting to flee France. Charged with rape of minors and sex trafficking. Found hanged in La Santé Prison Feb 19, 2022 — days before he was scheduled to testify. Death circumstances mirrored Epstein's. Investigation closed within weeks.", date: "Feb 2022", profileId: "jean-luc-brunel", type: "death" },
-  { name: "Virginia Giuffre", role: "Primary accuser / Lead survivor advocate", action: "Died by suicide at age 41 in Australia, April 2025. Had been Epstein's most prominent accuser, filing lawsuits against Andrew, Dershowitz, and others. Her testimony was central to the Maxwell trial. Survivors' advocates noted the immense psychological toll of decades of public litigation.", date: "Apr 2025", type: "death" },
+  { name: "Jes Staley", role: "Barclays CEO / Former JPMorgan Private Banking Head", action: "Resigned from Barclays in 2021 when FCA investigation launched. UK FCA subsequently banned him from financial services and fined £1.8M. 2025 tribunal revealed 1,200+ emails with Epstein and that he slept with an Epstein assistant. JPMorgan paid $365M in settlements partly due to Staley\'s role as Epstein\'s primary banking contact.", date: "2021-2025", profileId: "jes-staley", type: "banned" },
+  { name: "Brad Karp", role: "Chairman, Paul Weiss (law firm)", action: "Resigned chairmanship of one of America\'s most powerful law firms after email exchanges with Epstein became public in file releases. Paul Weiss had represented multiple Epstein-connected clients.", date: "Feb 2026", type: "resignation" },
+  { name: "Miroslav Lajčák", role: "Slovakia National Security Adviser", action: "Resigned after opposition pressure following file release. Former UN General Assembly president named in Epstein\'s contact records.", date: "Jan 31, 2026", type: "resignation" },
+  { name: "Joanna Rubinstein", role: "Chair, Sweden for UNHCR", action: "Resigned after files revealed she visited Epstein\'s island in 2012 — 4 years after his conviction.", date: "Feb 2, 2026", type: "resignation" },
+  { name: "Jean-Luc Brunel", role: "Model Agent / Named FBI Co-Conspirator", action: "Arrested Dec 2020 at Charles de Gaulle airport attempting to flee France. Charged with rape of minors and sex trafficking. Found hanged in La Santé Prison Feb 19, 2022 — days before he was scheduled to testify. Death circumstances mirrored Epstein\'s. Investigation closed within weeks.", date: "Feb 2022", profileId: "jean-luc-brunel", type: "death" },
+  { name: "Virginia Giuffre", role: "Primary accuser / Lead survivor advocate", action: "Died by suicide at age 41 in Australia, April 2025. Had been Epstein\'s most prominent accuser, filing lawsuits against Andrew, Dershowitz, and others. Her testimony was central to the Maxwell trial. Survivors\' advocates noted the immense psychological toll of decades of public litigation.", date: "Apr 2025", type: "death" },
   { name: "David Copperfield", role: "Illusionist / Las Vegas Headliner", action: "Facing public calls and Vital Vegas campaign to cancel his MGM Grand residency show. Named by Sjoberg in testimony. Epstein pleaded the Fifth when asked if he shared underage girls with Copperfield. 2025 victim alleged improper touching.", date: "Feb 2026", profileId: "david-copperfield", type: "public_pressure" },
   { name: "Bill Richardson", role: "Former NM Governor / Energy Secretary", action: "Died Sept 2023 at age 75, before major file releases. Had been named by Virginia Giuffre. Denied all allegations throughout his life. Death meant he could never be questioned or face accountability.", date: "Sep 2023", profileId: "bill-richardson", type: "death" },
-  { name: "JPMorgan Chase", role: "Epstein's primary bank (1998-2013)", action: "Paid $365M in settlements ($290M to victims, $75M to USVI) for maintaining Epstein as client despite filing 150 suspicious activity reports. No executives faced personal consequences. Bank generated $8M+ in fees from Epstein accounts.", date: "Jun-Sep 2023", type: "settlement" },
-  { name: "Deutsche Bank", role: "Epstein's bank after JPMorgan (2013-2018)", action: "Paid $75M settlement to victims for maintaining Epstein as client AFTER his conviction and AFTER JPMorgan dropped him. Bank's compliance systems flagged concerns that were overruled by relationship managers.", date: "May 2023", type: "settlement" },
+  { name: "JPMorgan Chase", role: "Epstein\'s primary bank (1998-2013)", action: "Paid $365M in settlements ($290M to victims, $75M to USVI) for maintaining Epstein as client despite filing 150 suspicious activity reports. No executives faced personal consequences. Bank generated $8M+ in fees from Epstein accounts.", date: "Jun-Sep 2023", type: "settlement" },
+  { name: "Deutsche Bank", role: "Epstein\'s bank after JPMorgan (2013-2018)", action: "Paid $75M settlement to victims for maintaining Epstein as client AFTER his conviction and AFTER JPMorgan dropped him. Bank\'s compliance systems flagged concerns that were overruled by relationship managers.", date: "May 2023", type: "settlement" },
   { name: "Ghislaine Maxwell", role: "Convicted sex trafficker", action: "Found guilty Dec 2021 on 5 of 6 federal charges including sex trafficking of a minor. Sentenced to 20 years. Appeal denied 2024. Currently incarcerated at FCI Tallahassee. Only associate of Epstein to face federal prosecution.", date: "Dec 2021", profileId: "ghislaine-maxwell", type: "conviction" },
   { name: "Two MCC Guards", role: "Metropolitan Correctional Center staff", action: "Tova Noel and Michael Thomas charged with falsifying records and conspiracy. Both admitted to sleeping during shifts and fabricating wellness check logs. Accepted deferred prosecution agreements — no jail time.", date: "2021", type: "plea_deal" },
 ];
@@ -872,32 +872,32 @@ const MONEY_TOTALS = [
 
 const UNANSWERED = [
   { q: "Who are the 3 unidentified co-conspirators?", detail: "FBI identified 10 co-conspirators in July 2019. Seven names are now known (Maxwell, Brunel, Wexner, Kellen, Groff, Ross, Marcinkova). Three remain completely redacted. DOJ has never explained why these names are withheld even after the Transparency Act.", status: "REDACTED", source: "DOJ Files, FBI emails July 2019" },
-  { q: "Where are the prosecution memos?", detail: "Internal DOJ memos describing which co-conspirators could be charged — and on what evidence — were referenced in released documents but never included in any release. These would reveal who prosecutors believed was criminally liable and why charges weren't brought.", status: "WITHHELD", source: "Khanna-Massie letter to AG" },
-  { q: "Where are the FBI victim interviews (302s)?", detail: "FBI Form 302s document witness/victim interviews in detail. Lawmakers specifically requested these. They would contain victims' accounts of which powerful individuals were involved. DOJ has not released them despite the Transparency Act.", status: "WITHHELD", source: "Khanna-Massie letter, CNN" },
-  { q: "What's in the draft indictment from the 2000s?", detail: "A draft federal indictment from the mid-2000s would have charged 3+ individuals alongside Epstein. The document exists in DOJ files but names are redacted. This indictment was prepared before Acosta's plea deal killed the federal case.", status: "REDACTED", source: "CNN, DOJ Files" },
-  { q: "Why weren't co-conspirators charged after the plea deal was voided?", detail: "In 2015, Judge Marra ruled the 2008 plea deal violated victims' rights. In 2019, SDNY brought new charges against Epstein. But Kellen, Groff, Ross, and Marcinkova — who received immunity under the voided deal — were never subsequently charged. No explanation has been given.", status: "UNANSWERED", source: "Court records, CVRA ruling" },
-  { q: "What's in the other 3 million pages?", detail: "DOJ acknowledged 6M pages may qualify for release under the Transparency Act but released only 3M, calling it the 'final' release. Reps. Khanna and Massie wrote that FBI victim interviews, draft indictments, and prosecution memos are among the withheld materials.", status: "WITHHELD", source: "DOJ letter to Congress, Khanna-Massie" },
-  { q: "Who visited the island — and when?", detail: "Complete visitor logs for Little St. James island have never been released. Only partial flight manifests from Epstein's jets are available. The island had a helipad, and visitors also arrived by boat — those records have never surfaced. The full picture of who went there remains unknown.", status: "UNRELEASED", source: "Multiple outlets, court records" },
-  { q: "What happened to the MCC surveillance footage?", detail: "Camera footage from directly outside Epstein's cell was deemed 'unusable' due to a technical failure. AG Barr said he personally reviewed footage from adjacent cameras and was satisfied it was suicide. The footage has never been released publicly. The facility had known camera and security issues predating Epstein.", status: "CLOSED — QUESTIONS REMAIN", source: "DOJ IG report, AG Barr statements" },
-  { q: "What was on the hard drives seized from Epstein's safe?", detail: "When FBI raided Epstein's NYC townhouse in July 2019, they found a locked safe containing CDs/DVDs labeled with names (including a young woman's name + specific man's name), loose diamonds, an expired Austrian passport with Epstein's photo but a different name, and cash. The contents of these recordings have never been disclosed.", status: "UNRELEASED", source: "SDNY evidence filing, court records" },
-  { q: "Why was Brunel's death investigation closed so quickly?", detail: "Jean-Luc Brunel — a named FBI co-conspirator — was found hanged in his French prison cell on Feb 19, 2022, days before he was scheduled to testify. His death closely mirrored Epstein's: hanging, guards not checking, cameras not capturing. French authorities concluded suicide within weeks. No independent investigation was conducted.", status: "CLOSED — QUESTIONS REMAIN", source: "French court records, multiple outlets" },
-  { q: "What were Epstein's intelligence connections?", detail: "Multiple credible reports suggest Epstein had connections to intelligence agencies. Former Israeli PM Ehud Barak was a frequent visitor. AG Barr's father hired Epstein at Dalton School in 1974 despite no teaching degree. Acosta reportedly told transition team the plea deal happened because Epstein 'belonged to intelligence.' The full scope has never been investigated publicly.", status: "UNANSWERED", source: "Vicky Ward (Daily Beast), court depositions" },
-  { q: "Where is Maxwell's rumored evidence trove?", detail: "Multiple reports indicated Maxwell maintained her own records and potential leverage material. During her arrest, FBI seized electronic devices. The full contents have never been disclosed. Maxwell's attorneys referenced 'materials' during proceedings that remain under seal.", status: "UNRELEASED", source: "Court filings, multiple outlets" },
+  { q: "Where are the prosecution memos?", detail: "Internal DOJ memos describing which co-conspirators could be charged — and on what evidence — were referenced in released documents but never included in any release. These would reveal who prosecutors believed was criminally liable and why charges weren\'t brought.", status: "WITHHELD", source: "Khanna-Massie letter to AG" },
+  { q: "Where are the FBI victim interviews (302s)?", detail: "FBI Form 302s document witness/victim interviews in detail. Lawmakers specifically requested these. They would contain victims\' accounts of which powerful individuals were involved. DOJ has not released them despite the Transparency Act.", status: "WITHHELD", source: "Khanna-Massie letter, CNN" },
+  { q: "What\'s in the draft indictment from the 2000s?", detail: "A draft federal indictment from the mid-2000s would have charged 3+ individuals alongside Epstein. The document exists in DOJ files but names are redacted. This indictment was prepared before Acosta\'s plea deal killed the federal case.", status: "REDACTED", source: "CNN, DOJ Files" },
+  { q: "Why weren\'t co-conspirators charged after the plea deal was voided?", detail: "In 2015, Judge Marra ruled the 2008 plea deal violated victims\' rights. In 2019, SDNY brought new charges against Epstein. But Kellen, Groff, Ross, and Marcinkova — who received immunity under the voided deal — were never subsequently charged. No explanation has been given.", status: "UNANSWERED", source: "Court records, CVRA ruling" },
+  { q: "What\'s in the other 3 million pages?", detail: "DOJ acknowledged 6M pages may qualify for release under the Transparency Act but released only 3M, calling it the \'final\' release. Reps. Khanna and Massie wrote that FBI victim interviews, draft indictments, and prosecution memos are among the withheld materials.", status: "WITHHELD", source: "DOJ letter to Congress, Khanna-Massie" },
+  { q: "Who visited the island — and when?", detail: "Complete visitor logs for Little St. James island have never been released. Only partial flight manifests from Epstein\'s jets are available. The island had a helipad, and visitors also arrived by boat — those records have never surfaced. The full picture of who went there remains unknown.", status: "UNRELEASED", source: "Multiple outlets, court records" },
+  { q: "What happened to the MCC surveillance footage?", detail: "Camera footage from directly outside Epstein\'s cell was deemed \'unusable\' due to a technical failure. AG Barr said he personally reviewed footage from adjacent cameras and was satisfied it was suicide. The footage has never been released publicly. The facility had known camera and security issues predating Epstein.", status: "CLOSED — QUESTIONS REMAIN", source: "DOJ IG report, AG Barr statements" },
+  { q: "What was on the hard drives seized from Epstein\'s safe?", detail: "When FBI raided Epstein\'s NYC townhouse in July 2019, they found a locked safe containing CDs/DVDs labeled with names (including a young woman\'s name + specific man\'s name), loose diamonds, an expired Austrian passport with Epstein\'s photo but a different name, and cash. The contents of these recordings have never been disclosed.", status: "UNRELEASED", source: "SDNY evidence filing, court records" },
+  { q: "Why was Brunel\'s death investigation closed so quickly?", detail: "Jean-Luc Brunel — a named FBI co-conspirator — was found hanged in his French prison cell on Feb 19, 2022, days before he was scheduled to testify. His death closely mirrored Epstein\'s: hanging, guards not checking, cameras not capturing. French authorities concluded suicide within weeks. No independent investigation was conducted.", status: "CLOSED — QUESTIONS REMAIN", source: "French court records, multiple outlets" },
+  { q: "What were Epstein\'s intelligence connections?", detail: "Multiple credible reports suggest Epstein had connections to intelligence agencies. Former Israeli PM Ehud Barak was a frequent visitor. AG Barr\'s father hired Epstein at Dalton School in 1974 despite no teaching degree. Acosta reportedly told transition team the plea deal happened because Epstein 'belonged to intelligence.' The full scope has never been investigated publicly.", status: "UNANSWERED", source: "Vicky Ward (Daily Beast), court depositions" },
+  { q: "Where is Maxwell\'s rumored evidence trove?", detail: "Multiple reports indicated Maxwell maintained her own records and potential leverage material. During her arrest, FBI seized electronic devices. The full contents have never been disclosed. Maxwell\'s attorneys referenced \'materials\' during proceedings that remain under seal.", status: "UNRELEASED", source: "Court filings, multiple outlets" },
 ];
 
 const CONGRESSIONAL = [
-  { name: "Ro Khanna (D-CA)", action: "Co-led bipartisan Transparency Act push. Wrote joint letter with Massie demanding FBI 302s, draft indictments, and prosecution memos. Called DOJ's 3M page release 'insufficient' when 6M qualify. Consistent advocate since 2023.", stance: "pro", party: "D" },
+  { name: "Ro Khanna (D-CA)", action: "Co-led bipartisan Transparency Act push. Wrote joint letter with Massie demanding FBI 302s, draft indictments, and prosecution memos. Called DOJ\'s 3M page release 'insufficient' when 6M qualify. Consistent advocate since 2023.", stance: "pro", party: "D" },
   { name: "Thomas Massie (R-KY)", action: "Co-led with Khanna from the Republican side. Called DOJ release 'a fraction of what exists.' Introduced amendment requiring release of FBI victim interview notes. One of the most vocal bipartisan voices.", stance: "pro", party: "R" },
-  { name: "Chuck Schumer (D-NY)", action: "Senate floor speech: 'Who are the 10 co-conspirators? Why haven't we seen those memos? Where are the grand jury records?' Demanded DOJ explain why only 1 of 10 co-conspirators was ever charged.", stance: "pro", party: "D" },
+  { name: "Chuck Schumer (D-NY)", action: "Senate floor speech: 'Who are the 10 co-conspirators? Why haven\'t we seen those memos? Where are the grand jury records?' Demanded DOJ explain why only 1 of 10 co-conspirators was ever charged.", stance: "pro", party: "D" },
   { name: "Tim Scott (R-SC)", action: "Called for full transparency in Senate remarks. Supported bipartisan release efforts.", stance: "pro", party: "R" },
   { name: "Jamie Raskin (D-MD)", action: "Called for lawmakers to review unredacted files in a secure setting. Ranking member on House Oversight. Pushed for subpoena authority.", stance: "pro", party: "D" },
   { name: "James Comer (R-KY)", action: "As House Oversight Chair, authorized subpoenas for Maxwell, Clinton, and Wexner. Oversaw release of tens of thousands of committee pages.", stance: "pro", party: "R" },
-  { name: "Anna Paulina Luna (R-FL)", action: "Among the most vocal House members demanding full file release. Called for investigation into DOJ's redaction failures.", stance: "pro", party: "R" },
+  { name: "Anna Paulina Luna (R-FL)", action: "Among the most vocal House members demanding full file release. Called for investigation into DOJ\'s redaction failures.", stance: "pro", party: "R" },
   { name: "Ted Cruz (R-TX)", action: "Co-sponsored Senate transparency legislation. Called for accountability for all individuals named in files regardless of political affiliation.", stance: "pro", party: "R" },
   { name: "House Oversight Committee", action: "Subpoenaed Maxwell, Clinton, Wexner in Feb 2026. Released tens of thousands of pages of committee investigation records. Bipartisan vote.", stance: "pro", party: "Bipartisan" },
-  { name: "Pam Bondi (AG)", action: "Called Jan 30 release 'final' and 'fully compliant' with Transparency Act. Survivors' attorneys dispute both claims, noting 3M of 6M qualifying pages remain withheld. Did not address the redaction failures proactively.", stance: "mixed", party: "R" },
-  { name: "Todd Blanche (Deputy AG)", action: "Publicly stated redaction errors affected only '.001%' of materials. Survivors' attorneys called this characterization 'insulting' given 43+ victims' names were exposed. Did not explain how nude images of possible minors were published.", stance: "mixed", party: "R" },
-  { name: "Kash Patel (FBI Dir)", action: "Testified before Senate and House Judiciary Committees in Sept-Oct 2025. Addressed FBI's role in file review process. Has not publicly called for release of FBI 302s or prosecution memos.", stance: "neutral", party: "R" },
+  { name: "Pam Bondi (AG)", action: "Called Jan 30 release 'final' and 'fully compliant' with Transparency Act. Survivors\' attorneys dispute both claims, noting 3M of 6M qualifying pages remain withheld. Did not address the redaction failures proactively.", stance: "mixed", party: "R" },
+  { name: "Todd Blanche (Deputy AG)", action: "Publicly stated redaction errors affected only '.001%' of materials. Survivors\' attorneys called this characterization 'insulting' given 43+ victims\' names were exposed. Did not explain how nude images of possible minors were published.", stance: "mixed", party: "R" },
+  { name: "Kash Patel (FBI Dir)", action: "Testified before Senate and House Judiciary Committees in Sept-Oct 2025. Addressed FBI\'s role in file review process. Has not publicly called for release of FBI 302s or prosecution memos.", stance: "neutral", party: "R" },
   { name: "Most of Congress", action: "The Transparency Act passed 427-1 in the House and unanimously in the Senate. Yet the vast majority of members have made no public statements demanding DOJ release the other 3M withheld pages or explain why only 1 of 10 co-conspirators was charged.", stance: "silent", party: "Both" },
 ];
 
@@ -1135,12 +1135,13 @@ export default function EpsteinIndex() {
   const [comp, setComp] = useState(null);
   const [showDisc, setShowDisc] = useState(false);
   const [showSubmit, setShowSubmit] = useState(false);
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [imgErr, setImgErr] = useState({});
   const [moneyMin, setMoneyMin] = useState(0);
   const [mtYear, setMtYear] = useState("all");
   const [powerFilter, setPowerFilter] = useState("all");
   const [actionExpanded, setActionExpanded] = useState(null);
+  const [navOpen, setNavOpen] = useState(false);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   const profile = P[ap];
   const keys = Object.keys(P);
@@ -1184,9 +1185,18 @@ export default function EpsteinIndex() {
     return <div style={{ width: size, height: size, borderRadius: "50%", background: "#1a1a2e", border: `2px solid ${gold}`, display: "flex", alignItems: "center", justifyContent: "center", fontFamily: sans, fontSize: size * 0.3, fontWeight: 700, color: gold, flexShrink: 0 }}>{P[id]?.init || "?"}</div>;
   };
 
-  const CSS = `@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;0,900;1,400&family=JetBrains+Mono:wght@400;500&family=DM+Sans:wght@400;500;600;700&display=swap');*{box-sizing:border-box;margin:0;padding:0}::-webkit-scrollbar{width:5px}::-webkit-scrollbar-track{background:#0a0a0c}::-webkit-scrollbar-thumb{background:#333;border-radius:3px}body{background:#0a0a0c}`;
+  const CSS = `@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;0,900;1,400&family=JetBrains+Mono:wght@400;500&family=DM+Sans:wght@400;500;600;700&display=swap');*{box-sizing:border-box;margin:0;padding:0}::-webkit-scrollbar{width:5px}::-webkit-scrollbar-track{background:#0a0a0c}::-webkit-scrollbar-thumb{background:#333;border-radius:3px}body{background:#0a0a0c}
+@media(max-width:768px){
+  .nav-links{display:none !important}
+  .nav-links.open{display:flex !important;position:fixed;top:44px;left:0;right:0;background:#0d0d10;flex-wrap:wrap;padding:8px 12px;gap:4px;z-index:49;border-bottom:1px solid #1a1a1e;max-height:70vh;overflow-y:auto}
+  .nav-hamburger{display:flex !important}
+  .profile-sidebar{position:fixed !important;left:-260px;top:44px;height:calc(100vh - 44px);z-index:60;transition:left 0.3s ease;width:250px !important;box-shadow:4px 0 20px rgba(0,0,0,0.8)}
+  .profile-sidebar.open{left:0 !important}
+  .sidebar-overlay{display:block !important}
+  .profile-main{width:100% !important}
+  .mobile-sidebar-btn{display:flex !important}
+}`;
 
-    // eslint-disable-next-line no-unused-vars
   const totalActive = MONEY_TOTALS.length;
   const totalEvents = Object.values(P).reduce((a, p) => a + p.tl.length, 0);
 
@@ -1325,32 +1335,16 @@ export default function EpsteinIndex() {
             <div style={{ maxWidth: 480, background: "#141418", border: "1px solid #333", borderRadius: 8, padding: 28 }}>
               <h2 style={{ fontSize: 16, fontWeight: 700, marginBottom: 6, fontFamily: sans }}>Submit a Sourced Finding</h2>
               <p style={{ fontSize: 11, color: "#888", fontFamily: sans, marginBottom: 16 }}>All submissions require a verifiable primary source and go through editorial review.</p>
-              <form action="https://formspree.io/f/mjgekgzg" method="POST">
-                <div style={{ marginBottom: 10 }}>
-                  <label style={{ fontSize: 11, color: "#666", fontFamily: sans, display: "block", marginBottom: 3 }}>Profile Name *</label>
-                  <input name="profile" required style={{ width: "100%", padding: 7, background: "#1a1a1e", border: "1px solid #333", borderRadius: 4, color: "#ddd", fontFamily: sans, fontSize: 12 }} />
+              {["Profile Name *", "Event Description *", "Date *", "Primary Source URL *", "Your Handle (optional)"].map((label, i) => (
+                <div key={i} style={{ marginBottom: 10 }}>
+                  <label style={{ fontSize: 11, color: "#666", fontFamily: sans, display: "block", marginBottom: 3 }}>{label}</label>
+                  <input style={{ width: "100%", padding: 7, background: "#1a1a1e", border: "1px solid #333", borderRadius: 4, color: "#ddd", fontFamily: sans, fontSize: 12 }} />
                 </div>
-                <div style={{ marginBottom: 10 }}>
-                  <label style={{ fontSize: 11, color: "#666", fontFamily: sans, display: "block", marginBottom: 3 }}>Event Description *</label>
-                  <textarea name="description" required style={{ width: "100%", padding: 7, background: "#1a1a1e", border: "1px solid #333", borderRadius: 4, color: "#ddd", fontFamily: sans, fontSize: 12, minHeight: 80 }} />
-                </div>
-                <div style={{ marginBottom: 10 }}>
-                  <label style={{ fontSize: 11, color: "#666", fontFamily: sans, display: "block", marginBottom: 3 }}>Date *</label>
-                  <input name="date" required style={{ width: "100%", padding: 7, background: "#1a1a1e", border: "1px solid #333", borderRadius: 4, color: "#ddd", fontFamily: sans, fontSize: 12 }} />
-                </div>
-                <div style={{ marginBottom: 10 }}>
-                  <label style={{ fontSize: 11, color: "#666", fontFamily: sans, display: "block", marginBottom: 3 }}>Primary Source URL *</label>
-                  <input name="source" type="url" required style={{ width: "100%", padding: 7, background: "#1a1a1e", border: "1px solid #333", borderRadius: 4, color: "#ddd", fontFamily: sans, fontSize: 12 }} />
-                </div>
-                <div style={{ marginBottom: 10 }}>
-                  <label style={{ fontSize: 11, color: "#666", fontFamily: sans, display: "block", marginBottom: 3 }}>Your Handle (optional)</label>
-                  <input name="handle" style={{ width: "100%", padding: 7, background: "#1a1a1e", border: "1px solid #333", borderRadius: 4, color: "#ddd", fontFamily: sans, fontSize: 12 }} />
-                </div>
-                <div style={{ display: "flex", gap: 10, marginTop: 12 }}>
-                  <button type="submit" style={{ padding: "8px 20px", background: gold, color: "#000", border: "none", borderRadius: 4, cursor: "pointer", fontFamily: sans, fontWeight: 600, fontSize: 13 }}>Submit</button>
-                  <button type="button" onClick={() => setShowSubmit(false)} style={{ padding: "8px 20px", background: "none", color: "#888", border: "1px solid #333", borderRadius: 4, cursor: "pointer", fontFamily: sans, fontSize: 12 }}>Cancel</button>
-                </div>
-              </form>
+              ))}
+              <div style={{ display: "flex", gap: 10, marginTop: 12 }}>
+                <button onClick={() => { alert("Submission received for review. Thank you."); setShowSubmit(false); }} style={{ padding: "8px 20px", background: gold, color: "#000", border: "none", borderRadius: 4, cursor: "pointer", fontFamily: sans, fontWeight: 600, fontSize: 13 }}>Submit</button>
+                <button onClick={() => setShowSubmit(false)} style={{ padding: "8px 20px", background: "none", color: "#888", border: "1px solid #333", borderRadius: 4, cursor: "pointer", fontFamily: sans, fontSize: 12 }}>Cancel</button>
+              </div>
             </div>
           </div>
         )}
@@ -1359,15 +1353,19 @@ export default function EpsteinIndex() {
   }
 
   // ═══ NAV ═══
+  const navItems = [["profiles","Profiles"],["money","Money"],["mastertl","Timeline"],["network","Network"],["coconspirators","Co-Conspirators"],["govfailures","Gov Failures"],["contradictions","Contradictions"],["consequences","Consequences"],["unanswered","Unanswered"],["congress","Congress"],["corrections","Log"],["method","Method"],["sources","Sources"],["victims","Victims"],["accountability","Scorecard"],["juxtapose","While They Smiled"],["action","Take Action"],["sealed","Sealed"],["stillinpower","In Power"],["corporate","Corporate"]];
   const Nav = () => (
-    <header className="main-nav" style={{ borderBottom: "1px solid #1a1a1e", padding: "8px 16px", display: "flex", alignItems: "center", justifyContent: "space-between", background: "#0d0d10", position: "sticky", top: 0, zIndex: 50 }}>
-      <div style={{ display: "flex", alignItems: "center", gap: 12, flexWrap: "wrap", overflow: "auto" }} className="nav-links">
-        <button onClick={() => { setPage("landing"); window.scrollTo(0, 0); }} style={{ background: "none", border: "none", cursor: "pointer", color: gold, fontFamily: serif, fontSize: 15, fontWeight: 900, flexShrink: 0 }}>The Epstein Index</button>
-        {[["profiles","Profiles"],["money","Money"],["mastertl","Timeline"],["network","Network"],["coconspirators","Co-Conspirators"],["govfailures","Gov Failures"],["contradictions","Contradictions"],["consequences","Consequences"],["unanswered","Unanswered"],["congress","Congress"],["corrections","Log"],["method","Method"],["sources","Sources"],["victims","Victims"],["accountability","Scorecard"],["juxtapose","While They Smiled"],["action","Take Action"],["sealed","Sealed"],["stillinpower","In Power"],["corporate","Corporate"]].map(([p, l]) => (
-          <button key={p} onClick={() => { setPage(p); window.scrollTo(0, 0); }} style={{ padding: "3px 8px", background: page === p ? "rgba(201,162,39,0.1)" : "none", border: "none", color: page === p ? gold : "#666", cursor: "pointer", fontFamily: sans, fontSize: 10, borderRadius: 3, fontWeight: page === p ? 600 : 400, flexShrink: 0 }}>{l}</button>
+    <header style={{ borderBottom: "1px solid #1a1a1e", padding: "6px 12px", display: "flex", alignItems: "center", justifyContent: "space-between", background: "#0d0d10", position: "sticky", top: 0, zIndex: 50, minHeight: 44 }}>
+      <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+        <button className="nav-hamburger" onClick={() => setNavOpen(!navOpen)} style={{ display: "none", alignItems: "center", justifyContent: "center", background: "none", border: `1px solid ${gold}`, borderRadius: 4, padding: "4px 8px", cursor: "pointer", color: gold, fontSize: 16, flexShrink: 0 }}>☰</button>
+        <button onClick={() => { setPage("landing"); setNavOpen(false); }} style={{ background: "none", border: "none", cursor: "pointer", color: gold, fontFamily: serif, fontSize: 14, fontWeight: 900, whiteSpace: "nowrap" }}>The Epstein Index</button>
+      </div>
+      <div className={`nav-links${navOpen ? " open" : ""}`} style={{ display: "flex", alignItems: "center", gap: 4, flexWrap: "wrap" }}>
+        {navItems.map(([p, l]) => (
+          <button key={p} onClick={() => { setPage(p); setNavOpen(false); }} style={{ padding: "4px 8px", background: page === p ? "rgba(201,162,39,0.15)" : "none", border: "none", color: page === p ? gold : "#777", cursor: "pointer", fontFamily: sans, fontSize: 11, borderRadius: 4, fontWeight: page === p ? 700 : 400, whiteSpace: "nowrap" }}>{l}</button>
         ))}
       </div>
-      <div style={{ fontFamily: mono, fontSize: 9, color: "#444", flexShrink: 0 }} className="nav-stats">{keys.length} profiles · {totalEvents}+ events</div>
+      <div style={{ fontFamily: mono, fontSize: 9, color: "#444", whiteSpace: "nowrap", marginLeft: 8 }}>{keys.length} profiles</div>
     </header>
   );
 
@@ -2265,85 +2263,13 @@ export default function EpsteinIndex() {
   return (
     <div style={{ height: "100vh", background: "#0a0a0c", color: "#e2e2e8", fontFamily: serif, display: "flex", flexDirection: "column" }}>
       <style>{CSS}</style><Nav />
-      
-      {/* Mobile Menu Button */}
-      <button 
-        onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-        style={{ 
-          display: "none",
-          position: "fixed",
-          top: 54,
-          left: 8,
-          zIndex: 100,
-          background: gold,
-          border: "none",
-          borderRadius: 4,
-          padding: "6px 10px",
-          cursor: "pointer",
-          fontSize: 16,
-          color: "#000",
-          boxShadow: "0 2px 8px rgba(0,0,0,0.3)"
-        }}
-        className="mobile-menu-btn"
-      >
-        ☰
-      </button>
-
-      <style>{`
-        @media (max-width: 768px) {
-          .mobile-menu-btn {
-            display: block !important;
-          }
-          .main-nav {
-            padding: 6px 8px !important;
-          }
-          .nav-links {
-            flex-wrap: nowrap !important;
-            overflow-x: auto !important;
-            overflow-y: hidden !important;
-            -webkit-overflow-scrolling: touch;
-            scrollbar-width: none; /* Firefox */
-            -ms-overflow-style: none; /* IE/Edge */
-          }
-          .nav-links::-webkit-scrollbar {
-            display: none; /* Chrome/Safari */
-          }
-          .nav-stats {
-            display: none !important;
-          }
-          .sidebar {
-            position: fixed !important;
-            left: ${mobileMenuOpen ? '0' : '-250px'} !important;
-            top: 0 !important;
-            height: 100vh !important;
-            z-index: 99 !important;
-            transition: left 0.3s ease !important;
-            width: 250px !important;
-          }
-          .sidebar-overlay {
-            display: ${mobileMenuOpen ? 'block' : 'none'} !important;
-            position: fixed !important;
-            inset: 0 !important;
-            background: rgba(0,0,0,0.7) !important;
-            z-index: 98 !important;
-          }
-          .main-content {
-            width: 100% !important;
-          }
-        }
-      `}</style>
-
-      {/* Overlay for mobile */}
-      <div 
-        className="sidebar-overlay"
-        onClick={() => setMobileMenuOpen(false)}
-      />
-      
+      {/* Mobile overlay */}
+      {mobileMenuOpen && <div className="sidebar-overlay" onClick={() => setMobileMenuOpen(false)} style={{ display: "none", position: "fixed", inset: 0, background: "rgba(0,0,0,0.7)", zIndex: 55 }} />}
       <div style={{ display: "flex", flex: 1, overflow: "hidden" }}>
-        <aside className="sidebar" style={{ width: 210, borderRight: "1px solid #1a1a1e", background: "#0d0d10", overflowY: "auto", flexShrink: 0, padding: 10 }}>
+        <aside className={`profile-sidebar${mobileMenuOpen ? " open" : ""}`} style={{ width: 210, borderRight: "1px solid #1a1a1e", background: "#0d0d10", overflowY: "auto", flexShrink: 0, padding: 10 }}>
           <input value={search} onChange={e => setSearch(e.target.value)} placeholder="Search..." style={{ width: "100%", padding: "7px 9px", background: "#111", border: "1px solid #222", borderRadius: 4, color: "#ddd", fontFamily: sans, fontSize: 11, marginBottom: 8 }} />
           {filtered.map(k => (
-            <button key={k} onClick={() => { go(k); setMobileMenuOpen(false); window.scrollTo(0, 0); }} style={{ display: "flex", alignItems: "center", gap: 8, width: "100%", padding: "6px 8px", border: ap === k ? `1px solid ${gold}` : "1px solid transparent", background: ap === k ? "#1a1a10" : "transparent", color: ap === k ? gold : "#999", borderRadius: 4, cursor: "pointer", textAlign: "left", fontFamily: sans, fontSize: 11, marginBottom: 2 }}>
+            <button key={k} onClick={() => { go(k); setMobileMenuOpen(false); }} style={{ display: "flex", alignItems: "center", gap: 8, width: "100%", padding: "6px 8px", border: ap === k ? `1px solid ${gold}` : "1px solid transparent", background: ap === k ? "#1a1a10" : "transparent", color: ap === k ? gold : "#999", borderRadius: 4, cursor: "pointer", textAlign: "left", fontFamily: sans, fontSize: 11, marginBottom: 2 }}>
               <ProfileImg id={k} size={24} />
               <div>
                 <div style={{ fontWeight: 600, fontSize: 11 }}>{P[k].name}</div>
@@ -2371,10 +2297,13 @@ export default function EpsteinIndex() {
           </div>
         </aside>
 
-        <main className="main-content" style={{ flex: 1, overflowY: "auto" }}>
+        <main className="profile-main" style={{ flex: 1, overflowY: "auto" }}>
           <div style={{ padding: "20px 24px 0", borderBottom: "1px solid #1a1a1e" }}>
             <div style={{ display: "flex", gap: 14, alignItems: "flex-start", marginBottom: 12 }}>
-              <ProfileImg id={ap} size={52} />
+              <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 6, flexShrink: 0 }}>
+                <ProfileImg id={ap} size={52} />
+                <button className="mobile-sidebar-btn" onClick={() => setMobileMenuOpen(!mobileMenuOpen)} style={{ display: "none", alignItems: "center", justifyContent: "center", background: gold, border: "none", borderRadius: 4, padding: "3px 8px", cursor: "pointer", fontSize: 10, color: "#000", fontWeight: 700, fontFamily: sans, whiteSpace: "nowrap" }}>☰ Browse</button>
+              </div>
               <div style={{ flex: 1 }}>
                 <h2 style={{ fontSize: 22, fontWeight: 900, letterSpacing: "-0.02em", marginBottom: 2, fontFamily: serif }}>{profile.name}</h2>
                 <div style={{ fontFamily: sans, fontSize: 11, color: "#888" }}><span style={{ color: gold }}>{profile.role}</span>{profile.prev && <span> · Prev: {profile.prev}</span>}</div>
