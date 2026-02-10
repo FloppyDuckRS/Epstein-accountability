@@ -1,4 +1,14 @@
-import { useState, useMemo } from "react";
+import React, { useState, useMemo, useRef, useCallback } from "react";
+
+// ═══ ERROR BOUNDARY (prevents black screen crashes) ═══
+class SearchErrorBoundary extends React.Component {
+  constructor(props) { super(props); this.state = { hasError: false }; }
+  static getDerivedStateFromError() { return { hasError: true }; }
+  render() {
+    if (this.state.hasError) return React.createElement("div", { style: { padding: 16, color: "#666", fontFamily: "'DM Sans', sans-serif", fontSize: 13 } }, "Search encountered an error. Please try a different term.");
+    return this.props.children;
+  }
+}
 
 // ═══════════════════════════════════════════════════════
 // CONFIGURATION & CONSTANTS
@@ -42,6 +52,7 @@ const PHOTOS = {
   "steven-tisch": "",
   "alexander-acosta": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a4/Alexander_Acosta_official_photo.jpg/220px-Alexander_Acosta_official_photo.jpg",
   "leslie-wexner": "",
+  "sultan-bin-sulayem": "",
   "ghislaine-maxwell": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c5/Ghislaine_Maxwell_cropped.jpg/220px-Ghislaine_Maxwell_cropped.jpg",
   "leon-black": "",
   "noam-chomsky": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/ed/Noam_Chomsky%2C_2004.jpg/220px-Noam_Chomsky%2C_2004.jpg",
@@ -407,7 +418,7 @@ const P = {
   ]},
   "leslie-wexner": {
     name: "Leslie Wexner", cat: "Business", role: "Former CEO L Brands / Victoria's Secret", prev: "Billionaire retail magnate", init: "LW",
-    sum: "Named in FBI email among '10 co-conspirators.' Gave Epstein unlimited power of attorney over his fortune. Epstein posed as Victoria's Secret recruiter to lure victims. Epstein's NYC mansion, jet, and lifestyle all flowed from Wexner. Subpoenaed by Congress Feb 2026.",
+    sum: "FBI's own 2019 document labels Wexner as CO-CONSPIRATOR in child sex trafficking — revealed Feb 9, 2026 when Rep. Massie forced DOJ to unredact his name. Gave Epstein unlimited power of attorney. Epstein posed as Victoria's Secret recruiter to lure victims. Epstein's NYC mansion, jet, and lifestyle all flowed from Wexner. Testifying before Congress Feb 18, 2026.",
     resp: "'Being taken advantage of by someone who was so sick, so cunning, so depraved is something that I am embarrassed that I was even close to.'",
     respDate: "2019",
     tax: [
@@ -424,13 +435,15 @@ const P = {
       { date: "2007", year: 2007, title: "Severed Ties", desc: "Cut relationship after Florida indictment. Accused Epstein of misappropriating $46M (recovered). Never sued Epstein.", source: "Wexner Foundation letter", url: "", type: "claim", confidence: "primary" },
       { date: "Jul 2019", year: 2019, title: "Named Among '10 Co-Conspirators'", desc: "FBI email listed Wexner among 10 co-conspirators. Described as 'wealthy businessman in Ohio' who hadn't been served subpoena. Never charged.", source: "DOJ Files, WOSU/Mediaite", url: "https://www.wosu.org/politics-government/2025-12-23/wexner-named-in-released-epstein-email-about-co-conspirators-in-sex-trafficking-case", type: "government", confidence: "primary" },
       { date: "Jan 2026", year: 2026, title: "Subpoenaed by Congress", desc: "House Oversight Committee subpoenaed Wexner to sit for deposition. Scheduled to testify Feb 18, 2026.", source: "Wikipedia, Puck", url: "https://en.wikipedia.org/wiki/Les_Wexner", type: "government", confidence: "primary" },
+      { date: "Feb 9, 2026", year: 2026, title: "FBI Co-Conspirator Label Revealed", desc: "After Massie reviewed unredacted files, he asked DOJ why a 'well known retired CEO' was redacted in an FBI document labeling individuals as co-conspirators. Deputy AG Blanche unredacted Wexner's name, saying it 'already appears thousands of times.' Massie: 'This is FBI's own 2019 document listing Wexner as coconspirator in child sex trafficking.'", source: "Massie X posts, New Republic, The Hill", url: "https://newrepublic.com/post/206396/justice-department-uae-sultan-epstein-email-torture-video", type: "government", confidence: "primary" },
+      { date: "Feb 10, 2026", year: 2026, title: "Named on House Floor as Co-Conspirator", desc: "Rep. Khanna read Wexner's name on the House floor: 'Billionaire businessman Leslie Wexner, who was labeled as a co-conspirator by the FBI.' One of 6 men whose names were improperly redacted by DOJ.", source: "C-SPAN, Newsweek, Raw Story", url: "https://www.newsweek.com/who-are-6-redacted-potential-co-conspirators-in-epstein-files-what-we-know-11498662", type: "government", confidence: "primary" },
     ]
   },
   "ghislaine-maxwell": {
     name: "Ghislaine Maxwell", cat: "Convicted / Inner Circle", role: "Convicted sex trafficker (serving 20 years)", prev: "Socialite, Epstein's partner", init: "GM",
-    sum: "The ONLY person convicted. Found guilty Dec 2021 on 5 of 6 counts: conspiracy, sex trafficking of a minor, transporting a minor with intent to engage in criminal sexual activity. Sentenced to 20 years. Currently in minimum-security facility. The files reveal her as the operational center of Epstein's network.",
-    resp: "Through attorneys: maintains innocence and is appealing conviction.",
-    respDate: "Ongoing",
+    sum: "The ONLY person convicted. Found guilty Dec 2021 on 5 of 6 counts: conspiracy, sex trafficking of a minor, transporting a minor with intent to engage in criminal sexual activity. Sentenced to 20 years. Currently in minimum-security facility in Bryan, Texas. Pleaded the Fifth before House Oversight Committee Feb 10, 2026, but offered to testify if Trump grants clemency.",
+    resp: "Attorney David Oscar Markus (Feb 10, 2026): 'Ms. Maxwell is prepared to speak fully and honestly if granted clemency by President Trump. Both President Trump and President Clinton are innocent of any wrongdoing. Ms. Maxwell alone can explain why.'",
+    respDate: "Feb 10, 2026",
     tax: [],
     conn: ["donald-trump", "bill-clinton", "andrew-mw", "bill-gates", "leslie-wexner", "sergey-brin"],
     tl: [
@@ -442,6 +455,8 @@ const P = {
       { date: "Jun 2022", year: 2022, title: "Sentenced to 20 Years", desc: "Sentenced to 20 years in federal prison by Judge Alison Nathan.", source: "Court records", url: "", type: "government", confidence: "primary" },
       { date: "Summer 2025", year: 2025, title: "Moved to Minimum Security", desc: "Transferred to minimum-security federal facility.", source: "Multiple outlets", url: "", type: "government", confidence: "corroborated" },
       { date: "Jul 2025", year: 2025, title: "Subpoenaed by House Oversight", desc: "House Oversight Committee issued subpoena for testimony.", source: "House Oversight", url: "", type: "government", confidence: "primary" },
+      { date: "Jul 2025", year: 2025, title: "DOJ Limited Immunity Interview", desc: "Met with Deputy AG Todd Blanche under limited immunity. Did not plead the Fifth in that interview. Later transferred from Florida to minimum-security prison camp in Bryan, Texas.", source: "NBC News", url: "https://www.nbcnews.com/politics/justice-department/ghislaine-maxwell-pleads-fifth-says-speak-fully-honestly-trump-grants-rcna258227", type: "government", confidence: "primary" },
+      { date: "Feb 10, 2026", year: 2026, title: "Pleaded Fifth Before House Oversight", desc: "Virtual deposition before House Oversight Committee. Invoked Fifth Amendment on every question — refused to name co-conspirators, denied answering whether she participated in abuse. Attorney offered: will testify fully if Trump grants clemency, claiming both Trump and Clinton are 'innocent.' Comer: 'I don't think she should be granted any type of immunity or clemency.'", source: "CBS, NBC, Axios, Fox News", url: "https://www.cbsnews.com/news/ghislaine-maxwell-house-oversight-committee-deposition-fifth-amendment/", type: "government", confidence: "primary" },
     ]
   },
   "leon-black": {
@@ -761,6 +776,23 @@ const P = {
       { date: "Dec 2025", year: 2025, title: "Photo with Epstein and Branson", desc: "Photo released by House Oversight Committee showing Kamen with Epstein and Richard Branson.", source: "House Oversight Democrats", url: "", type: "document", confidence: "primary" },
     ]
   },
+  "sultan-bin-sulayem": {
+    name: "Sultan Ahmed bin Sulayem", cat: "Business / Foreign Government", role: "Chairman & CEO, DP World (Dubai)", prev: "Chairman Nakheel, Dubai Ports World", init: "SBS",
+    sum: "Identified by Rep. Massie as the sender of a 'torture video' to Epstein in 2009 email. Name was redacted by DOJ until Feb 10, 2026 when Massie exposed it after viewing unredacted files. Separate emails show him describing sending women to Epstein. CEO of DP World, one of the world's largest logistics companies. Named by Khanna on House floor as one of 6 improperly redacted men.",
+    resp: "No public comment as of Feb 10, 2026. DP World has not responded to media inquiries.",
+    respDate: "N/A",
+    tax: [
+      { type: "DP World — U.S. Port Operations", detail: "DP World operates port terminals in the United States. Previously sparked national security controversy in 2006 Dubai Ports World deal.", source: "Public records", status: "Active — U.S. port operations", amount: "Billions in U.S. port logistics", verified: true },
+    ],
+    conn: [],
+    tl: [
+      { date: "2009", year: 2009, title: "Torture Video Email", desc: "Epstein emailed bin Sulayem: 'Where are you? Are you ok, I loved the torture video.' Bin Sulayem replied: 'I am in china I will be in the US 2nd week of may.' Nature of video unknown.", source: "DOJ Files — email, Newsweek", url: "https://www.newsweek.com/sultan-ahmed-bin-sulayem-epstein-files-massie-torture-video-email-11494204", type: "document", confidence: "primary" },
+      { date: "2012", year: 2012, title: "Dinner Invitation to Epstein Home", desc: "Receipt shows dinner invitation to Epstein's residence.", source: "DOJ Files", url: "", type: "contact", confidence: "primary" },
+      { date: "Sep 2015", year: 2015, title: "Email Describing Woman to Epstein", desc: "Wrote to Epstein: 'This girl is russian father Cypriot mom I met her two years ago she goes to the American university in Dubai. She got engaged but now she back with me. The best sex I ever had amazing body.'", source: "DOJ Files — email, New Republic", url: "https://newrepublic.com/post/206396/justice-department-uae-sultan-epstein-email-torture-video", type: "document", confidence: "primary" },
+      { date: "Feb 9, 2026", year: 2026, title: "Identified by Rep. Massie", desc: "After viewing unredacted files at DOJ, Rep. Massie posted on X: 'A Sultan seems to have sent this. DOJ should make this public.' Deputy AG Blanche confirmed the name was in file EFTA00666117.", source: "Massie X post, Newsweek, The Hill", url: "https://thehill.com/homenews/administration/5731080-doj-unredacts-epstein-files/", type: "government", confidence: "primary" },
+      { date: "Feb 10, 2026", year: 2026, title: "Named on House Floor", desc: "Rep. Khanna read bin Sulayem's name on the House floor as one of 6 men improperly redacted by DOJ. Protected by Speech and Debate Clause.", source: "C-SPAN, Raw Story, New Republic", url: "https://newrepublic.com/post/206411/ro-khanna-reads-redacted-names-epstein-files-house-floor", type: "government", confidence: "primary" },
+    ]
+  },
 
 };
 
@@ -771,16 +803,16 @@ const CO_CONSPIRATORS = {
   named: [
     { name: "Ghislaine Maxwell", status: "Convicted — serving 20 years", detail: "Only person federally prosecuted. Found guilty Dec 2021 on 5 of 6 counts including sex trafficking of a minor. Sentenced to 20 years. Appeal denied. Currently at FCI Tallahassee.", profileId: "ghislaine-maxwell" },
     { name: "Jean-Luc Brunel", status: "Deceased — died in French jail 2022", detail: "Model scout who founded MC2 Model Management with $1M from Epstein. Arranged visas for young models from Eastern Europe. 25 flights on Epstein's jet. 70+ jail visits during 2008 sentence. Charged with rape of minors. Found hanged in La Santé Prison Feb 19, 2022 — before he could testify.", profileId: "jean-luc-brunel" },
-    { name: "Leslie Wexner", status: "Named in FBI email — subpoenaed Feb 2026", detail: "Described as 'wealthy businessman in Ohio' in FBI emails. Gave Epstein sweeping power of attorney. Gifted Epstein the $77M NYC townhouse. Victoria's Secret connection used to lure victims. Subpoenaed by House Oversight. Testifying Feb 18, 2026.", profileId: "leslie-wexner" },
+    { name: "Leslie Wexner", status: "FBI-labeled co-conspirator — testifying Feb 18, 2026", detail: "FBI's own 2019 document — written days after Epstein's death — labels Wexner as co-conspirator in child sex trafficking. Name was redacted by DOJ until Massie forced unredaction Feb 9, 2026. Gave Epstein sweeping power of attorney. Gifted $77M NYC townhouse. Victoria's Secret connection used to lure victims. Khanna read his name on House floor Feb 10.", profileId: "leslie-wexner" },
     { name: "Sarah Kellen", status: "Named co-conspirator 2007 — immunity via plea deal", detail: "Epstein's primary scheduler. Organized victims' visits, maintained contact lists. Victims testified Kellen recruited and scheduled them. Protected by 2008 plea deal. Never charged despite deal being voided. Now goes by Sarah Kensington." },
     { name: "Lesley Groff", status: "Named co-conspirator 2007 — immunity via plea deal", detail: "Epstein's executive assistant for 20+ years. Managed logistics, travel, and property access. Named on inner circle org chart. Protected under plea deal immunity." },
     { name: "Adriana Ross", status: "Named co-conspirator 2007 — immunity via plea deal", detail: "Also known as Adriana Mucinska. Named in FBI investigation as facilitator. Invoked Fifth Amendment in deposition. Protected under plea deal." },
     { name: "Nadia Marcinkova", status: "Named co-conspirator 2007 — immunity via plea deal", detail: "Alleged victim who became participant. Epstein reportedly 'purchased' her from her family in Yugoslavia as a teenager. Later became a pilot. Now goes by Nadia Marcinko. Never charged despite plea deal being voided." },
   ],
   unknown: 3,
-  source: "FBI emails July 2019, DOJ Files Dec 2025, Maxwell trial testimony",
-  subpoena_status: "6 of 10 served grand jury subpoenas. 3 in FL, 1 Boston, 1 NYC, 1 CT. 4 outstanding including 'wealthy businessman in Ohio.'",
-  key_question: "No alleged co-conspirator other than Maxwell has ever been charged. DOJ said in July 2025 there were 'no credible allegations' to charge others. Sen. Schumer: 'Who are these 10 co-conspirators? Why haven't we seen those memos?'",
+  source: "FBI emails July 2019, DOJ Files Dec 2025-Feb 2026, Maxwell trial testimony, Khanna House floor speech Feb 10, 2026",
+  subpoena_status: "6 of 10 served grand jury subpoenas. Wexner now confirmed as FBI-labeled co-conspirator. 5 newly unredacted names (Nuara, Mikeladze, Leonov, Caputo, bin Sulayem) — exact co-conspirator designations being determined.",
+  key_question: "FBI's own 2019 document labels individuals as co-conspirators, yet FBI Director Patel testified he knew of no other sex traffickers. Massie: 'If we found 6 in 2 hours, how many are they covering up?' Only Maxwell has ever been charged.",
   recruitment_pipeline: [
     { step: 1, title: "Initial Contact", desc: "Young girls (avg age 14-16) approached at schools, malls, or through existing victims with offers of $200-300 for a 'massage.'" },
     { step: 2, title: "First Visit", desc: "Brought to Epstein's Palm Beach mansion or NYC townhouse. What started as a massage escalated to sexual abuse." },
@@ -811,6 +843,10 @@ const GOV_FAILURES = [
   { date: "Feb 2, 2026", title: "DOJ Withdrew Thousands of Documents", desc: "Removed several thousand documents and media. Blamed 'technical or human error.' Attorneys had provided list of 350 victim names on Dec 4 — DOJ failed to even keyword-search for them.", source: "AP, PBS", type: "government" },
   { date: "Feb 6, 2026", title: "AG Bondi: 'Substantial Progress'", desc: "DOJ claimed 'substantial progress' in fixing redactions. Deputy AG Blanche: errors affected 'about .001%' of materials. Victims' attorneys called this characterization 'insulting.'", source: "DOJ letter, CBS", type: "government" },
   { date: "Ongoing", title: "Only 50% of Files Released", desc: "DOJ acknowledged 6M pages may qualify but released only 3M, calling it the 'final' release. Lawmakers Khanna and Massie say FBI victim interviews, draft indictments, and prosecution memos still withheld.", source: "Khanna-Massie letter, CNN", type: "government" },
+  { date: "Feb 10, 2026", title: "70-80% Still Redacted in 'Unredacted' Room", desc: "Massie and Khanna reported that even in the DOJ reading room supposedly containing unredacted files, 70-80% of documents remained redacted. Files had arrived pre-redacted from FBI and grand juries. Only 4 computers available for all of Congress.", source: "Massie/Khanna press conference, Axios, NBC", type: "government" },
+  { date: "Feb 10, 2026", title: "DOJ Hid 6 Co-Conspirator Names", desc: "Massie and Khanna found 6 men whose names were improperly redacted — including Les Wexner (FBI-labeled co-conspirator) and Sultan Ahmed bin Sulayem (torture video). DOJ only unredacted names AFTER being publicly called out. Khanna: 'If we found 6 in 2 hours, how many are they covering up in 3 million files?'", source: "The Hill, Newsweek, New Republic", type: "government" },
+  { date: "Feb 10, 2026", title: "FBI Scrubbed Files Before Transparency Act", desc: "Khanna revealed on House floor that Trump's FBI scrubbed files in March 2025 — months before the Transparency Act was even passed. Files produced to DOJ from FBI arrived pre-redacted, meaning career DOJ attorneys were reviewing already-censored material.", source: "New Republic, Khanna floor speech", type: "government" },
+  { date: "Feb 10, 2026", title: "Maxwell Pleads Fifth — Only Convicted Person Silenced", desc: "The only person convicted in the Epstein case refused to answer any questions before Congress, instead offering testimony in exchange for clemency. 20 years in, and no co-conspirators have been compelled to testify under oath without immunity.", source: "CBS, NBC, Fox News", type: "government" },
 ];
 
 // ═══════════════════════════════════════════════════════
@@ -834,6 +870,9 @@ const CONSEQUENCES = [
   { name: "Deutsche Bank", role: "Epstein's bank after JPMorgan (2013-2018)", action: "Paid $75M settlement to victims for maintaining Epstein as client AFTER his conviction and AFTER JPMorgan dropped him. Bank's compliance systems flagged concerns that were overruled by relationship managers.", date: "May 2023", type: "settlement" },
   { name: "Ghislaine Maxwell", role: "Convicted sex trafficker", action: "Found guilty Dec 2021 on 5 of 6 federal charges including sex trafficking of a minor. Sentenced to 20 years. Appeal denied 2024. Currently incarcerated at FCI Tallahassee. Only associate of Epstein to face federal prosecution.", date: "Dec 2021", profileId: "ghislaine-maxwell", type: "conviction" },
   { name: "Two MCC Guards", role: "Metropolitan Correctional Center staff", action: "Tova Noel and Michael Thomas charged with falsifying records and conspiracy. Both admitted to sleeping during shifts and fabricating wellness check logs. Accepted deferred prosecution agreements — no jail time.", date: "2021", type: "plea_deal" },
+  { name: "DOJ Forced to Unredact Names", role: "Department of Justice", action: "After Massie and Khanna publicly challenged redactions on X, DOJ unredacted names of 16 of 20 individuals on a key list within hours. Included Les Wexner (FBI co-conspirator label) and confirmed Sultan bin Sulayem. Deputy AG Blanche accused Massie of 'grandstanding' but complied. AOC: 'Why did you redact Les Wexner in the first place?'", date: "Feb 9-10, 2026", type: "government" },
+  { name: "Les Wexner", role: "Former CEO, L Brands / Victoria's Secret", action: "FBI's own 2019 document revealed to label Wexner as co-conspirator in child sex trafficking. Name read on House floor by Khanna. Set to testify before House Oversight Feb 18. Wexner's attorney previously told NYT he was not a target. Kash Patel testified he knew of no other sex traffickers in files — this document contradicts that.", date: "Feb 10, 2026", profileId: "leslie-wexner", type: "public_pressure" },
+  { name: "UK Political Crisis Deepens", role: "UK Government", action: "King Charles said he 'stands ready to support' police investigation into Prince Andrew sharing government info with Epstein. PM Starmer's chief of staff and comms director resigned. Mandelson under criminal investigation. UK experiencing consequences U.S. has largely avoided.", date: "Feb 10, 2026", type: "international" },
 ];
 
 // ═══════════════════════════════════════════════════════
@@ -849,7 +888,8 @@ const CONTRADICTIONS = [
 
   { person: "jeff-bezos", claim: "No public statement or response to Epstein connections.", claimDate: "N/A", evidence: "Oct 2009: at Maxwell's house with Clinton. 2018: Maxwell attended Bezos's exclusive 'Campfire' retreat at least 3 times.", evidenceSource: "DOJ Files, CNBC", profileId: "jeff-bezos" },
   { person: "jes-staley", claim: "Told FCA/Barclays he 'did not have a close relationship' with Epstein and last contact was 'well before' joining Barclays.", claimDate: "2019", evidence: "1,000+ emails. Called friendship 'profound.' 'Snow White' messages. Continued contact through Barclays tenure.", evidenceSource: "FCA tribunal, 1,200 emails", profileId: "jes-staley" },
-
+  { person: "todd-blanche", claim: "Deputy AG Blanche: 'DOJ is hiding nothing.' 'DOJ is committed to transparency.' Called Massie's concerns 'grandstanding.'", claimDate: "Feb 9, 2026", evidence: "Within hours of being challenged, DOJ unredacted 16 names it had hidden — including an FBI-labeled co-conspirator (Wexner). Files in 'unredacted' reading room were 70-80% still redacted. Removed files still not restored. 3M of 6M pages withheld.", evidenceSource: "Massie/Khanna press conference, The Hill, Newsweek", profileId: null },
+  { person: "kash-patel", claim: "FBI Director Kash Patel testified before Congress in 2025 that the FBI had no knowledge of other sex traffickers in Epstein files.", claimDate: "2025", evidence: "FBI's own 2019 document — written days after Epstein's death — labels Les Wexner as a co-conspirator in child sex trafficking. Massie: 'I don't think that's nefarious on the career attorneys but they obviously haven't gotten the production.' Raises question of whether Patel committed perjury.", evidenceSource: "FBI 2019 memo, Massie statements, New Republic", profileId: null },
 ];
 
 const MONEY_TOTALS = [
@@ -883,21 +923,29 @@ const UNANSWERED = [
   { q: "Why was Brunel's death investigation closed so quickly?", detail: "Jean-Luc Brunel — a named FBI co-conspirator — was found hanged in his French prison cell on Feb 19, 2022, days before he was scheduled to testify. His death closely mirrored Epstein's: hanging, guards not checking, cameras not capturing. French authorities concluded suicide within weeks. No independent investigation was conducted.", status: "CLOSED — QUESTIONS REMAIN", source: "French court records, multiple outlets" },
   { q: "What were Epstein's intelligence connections?", detail: "Multiple credible reports suggest Epstein had connections to intelligence agencies. Former Israeli PM Ehud Barak was a frequent visitor. AG Barr's father hired Epstein at Dalton School in 1974 despite no teaching degree. Acosta reportedly told transition team the plea deal happened because Epstein 'belonged to intelligence.' The full scope has never been investigated publicly.", status: "UNANSWERED", source: "Vicky Ward (Daily Beast), court depositions" },
   { q: "Where is Maxwell's rumored evidence trove?", detail: "Multiple reports indicated Maxwell maintained her own records and potential leverage material. During her arrest, FBI seized electronic devices. The full contents have never been disclosed. Maxwell's attorneys referenced 'materials' during proceedings that remain under seal.", status: "UNRELEASED", source: "Court filings, multiple outlets" },
+  { q: "If 6 names were found in 2 hours, how many are hidden in 3 million files?", detail: "Khanna asked this on the House floor Feb 10 after he and Massie found 6 improperly redacted names in just 2 hours of review. With only 4 computers available and 3M+ pages, comprehensive review by Congress would take years. Raises questions about whether systematic protection of powerful names is occurring.", status: "UNANSWERED", source: "Khanna House floor speech, Feb 10, 2026" },
+  { q: "Did FBI Director Patel commit perjury about co-conspirators?", detail: "Patel testified in 2025 that the FBI had no knowledge of other sex traffickers in Epstein files. But FBI's own 2019 document — written days after Epstein's death — labels Les Wexner as a co-conspirator. Either Patel didn't review the FBI's own files, or he misled Congress.", status: "UNANSWERED", source: "Patel testimony, FBI 2019 memo, Massie/New Republic" },
+  { q: "Why did the FBI scrub files months before the Transparency Act?", detail: "Khanna revealed Feb 10 that Trump's FBI redacted files in March 2025 — months before the Transparency Act was even drafted. Files produced to DOJ from FBI arrived pre-redacted. This means career DOJ attorneys were reviewing already-censored material, unable to assess what was hidden.", status: "UNANSWERED", source: "Khanna floor speech, Feb 10, 2026" },
+  { q: "What would Maxwell say under oath?", detail: "Maxwell's attorney claims she can provide 'the complete account' and that 'both President Trump and President Clinton are innocent.' But she will only speak if Trump grants clemency. House Oversight, House Speaker Johnson, and survivors all oppose clemency. If she dies in prison, her testimony dies with her.", status: "BLOCKED", source: "CBS, NBC, Axios" },
 ];
 
 const CONGRESSIONAL = [
-  { name: "Ro Khanna (D-CA)", action: "Co-led bipartisan Transparency Act push. Wrote joint letter with Massie demanding FBI 302s, draft indictments, and prosecution memos. Called DOJ's 3M page release 'insufficient' when 6M qualify. Consistent advocate since 2023.", stance: "pro", party: "D" },
-  { name: "Thomas Massie (R-KY)", action: "Co-led with Khanna from the Republican side. Called DOJ release 'a fraction of what exists.' Introduced amendment requiring release of FBI victim interview notes. One of the most vocal bipartisan voices.", stance: "pro", party: "R" },
+  { name: "Ro Khanna (D-CA)", action: "Co-led Transparency Act. Feb 10: Read 6 redacted names on House floor — Nuara, Mikeladze, Leonov, Caputo, bin Sulayem, Wexner. 'If we found 6 in 2 hours, imagine how many they're covering up in 3 million files.' Called for prosecution of 'the Epstein class.'", stance: "pro", party: "D" },
+  { name: "Thomas Massie (R-KY)", action: "Co-led Transparency Act. Feb 9: Reviewed unredacted files at DOJ. Forced DOJ to unredact Wexner's co-conspirator label, identified Sultan bin Sulayem as torture video sender. Publicly challenged Deputy AG Blanche on X, resulting in 16 names being unredacted within hours.", stance: "pro", party: "R" },
+  { name: "Jamie Raskin (D-MD)", action: "Ranking member, House Judiciary. Feb 9: Reviewed unredacted files, found 'tons of completely unnecessary redactions' including Trump's name and Wexner's. Called DOJ in 'cover-up mode.' Preparing questions for AG Bondi's Feb 12 testimony. Saw references to abuse of girls as young as 10.", stance: "pro", party: "D" },
+  { name: "James Comer (R-KY)", action: "House Oversight Chair. Overseeing 5 upcoming depositions: Wexner (Feb 18), Hillary Clinton (Feb 26), Bill Clinton (Feb 27), Richard Khan (Mar 11), Darren Indyke (Mar 19). After Maxwell pleaded Fifth: 'I don't think she should be granted any type of immunity or clemency.'", stance: "pro", party: "R" },
   { name: "Chuck Schumer (D-NY)", action: "Senate floor speech: 'Who are the 10 co-conspirators? Why haven't we seen those memos? Where are the grand jury records?' Demanded DOJ explain why only 1 of 10 co-conspirators was ever charged.", stance: "pro", party: "D" },
   { name: "Tim Scott (R-SC)", action: "Called for full transparency in Senate remarks. Supported bipartisan release efforts.", stance: "pro", party: "R" },
-  { name: "Jamie Raskin (D-MD)", action: "Called for lawmakers to review unredacted files in a secure setting. Ranking member on House Oversight. Pushed for subpoena authority.", stance: "pro", party: "D" },
-  { name: "James Comer (R-KY)", action: "As House Oversight Chair, authorized subpoenas for Maxwell, Clinton, and Wexner. Oversaw release of tens of thousands of committee pages.", stance: "pro", party: "R" },
+  { name: "Alexandria Ocasio-Cortez (D-NY)", action: "Feb 9: Challenged Deputy AG Blanche directly after Wexner unredaction: 'Why did you redact Les Wexner's name here in the first place? Are there other documents where you have redacted his name, which is against Congress' orders?'", stance: "pro", party: "D" },
+  { name: "Nancy Mace (R-SC)", action: "Among most vocal members. Feb 10: Went to DOJ to review unredacted files herself. Asked public to suggest specific EFTA document IDs to examine. 'My primary interest is in information about co-conspirators.'", stance: "pro", party: "R" },
   { name: "Anna Paulina Luna (R-FL)", action: "Among the most vocal House members demanding full file release. Called for investigation into DOJ's redaction failures.", stance: "pro", party: "R" },
   { name: "Ted Cruz (R-TX)", action: "Co-sponsored Senate transparency legislation. Called for accountability for all individuals named in files regardless of political affiliation.", stance: "pro", party: "R" },
-  { name: "House Oversight Committee", action: "Subpoenaed Maxwell, Clinton, Wexner in Feb 2026. Released tens of thousands of pages of committee investigation records. Bipartisan vote.", stance: "pro", party: "Bipartisan" },
-  { name: "Pam Bondi (AG)", action: "Called Jan 30 release 'final' and 'fully compliant' with Transparency Act. Survivors' attorneys dispute both claims, noting 3M of 6M qualifying pages remain withheld. Did not address the redaction failures proactively.", stance: "mixed", party: "R" },
-  { name: "Todd Blanche (Deputy AG)", action: "Publicly stated redaction errors affected only '.001%' of materials. Survivors' attorneys called this characterization 'insulting' given 43+ victims' names were exposed. Did not explain how nude images of possible minors were published.", stance: "mixed", party: "R" },
-  { name: "Kash Patel (FBI Dir)", action: "Testified before Senate and House Judiciary Committees in Sept-Oct 2025. Addressed FBI's role in file review process. Has not publicly called for release of FBI 302s or prosecution memos.", stance: "neutral", party: "R" },
+  { name: "Cynthia Lummis (R-WY)", action: "Feb 10: Publicly acknowledged the gravity of the Epstein revelations after Khanna's floor speech. 'Finally gets why Epstein is a big deal.' Growing bipartisan Senate interest.", stance: "pro", party: "R" },
+  { name: "Jared Moskowitz (D-FL)", action: "Feb 9: Reviewed unredacted files at DOJ. Confirmed key documents retained redactions despite DOJ promises. Supporting push for full transparency.", stance: "pro", party: "D" },
+  { name: "House Oversight Committee", action: "5 depositions confirmed: Maxwell (completed Feb 10 — pleaded Fifth), Wexner (Feb 18), H. Clinton (Feb 26), B. Clinton (Feb 27), Khan (Mar 11), Indyke (Mar 19). Bipartisan investigation ongoing.", stance: "pro", party: "Bipartisan" },
+  { name: "Pam Bondi (AG)", action: "Called Jan 30 release 'final' and 'fully compliant.' Testifying before House Judiciary Feb 12 — Raskin preparing to grill her on redaction decisions. Survivors' attorneys dispute compliance claims.", stance: "mixed", party: "R" },
+  { name: "Todd Blanche (Deputy AG)", action: "Feb 9: Called Massie's concerns 'grandstanding.' Then unredacted 16 names within hours after public pressure. Claimed 'DOJ is hiding nothing' and 'committed to transparency' while 70-80% of files in reading room remained redacted. Community notes on X disputed his legal reasoning.", stance: "mixed", party: "R" },
+  { name: "Kash Patel (FBI Dir)", action: "Testified in 2025 that FBI had no knowledge of other sex traffickers in Epstein files. FBI's own 2019 document labels Wexner as co-conspirator — raising perjury questions. Has not publicly addressed the contradiction.", stance: "neutral", party: "R" },
   { name: "Most of Congress", action: "The Transparency Act passed 427-1 in the House and unanimously in the Senate. Yet the vast majority of members have made no public statements demanding DOJ release the other 3M withheld pages or explain why only 1 of 10 co-conspirators was charged.", stance: "silent", party: "Both" },
 ];
 
@@ -911,6 +959,12 @@ const CORRECTIONS_LOG = [
   { date: "Feb 9, 2026", entry: "Dershowitz clarification: Giuffre accused him of trafficking, then said in 2022 she 'may have made a mistake.' No money exchanged. Dershowitz denies all allegations." },
   { date: "Feb 9, 2026", entry: "Brunel clarification: full profile added. Named FBI co-conspirator. Died in prison Feb 2022 before trial. Not convicted." },
   { date: "Feb 9, 2026", entry: "Staley clarification: FCA banned him from financial services. JPMorgan paid $365M in settlements. Staley denied knowledge of trafficking." },
+  { date: "Feb 10, 2026", entry: "Added Sultan Ahmed bin Sulayem profile. Identified by Massie as torture video sender. Named by Khanna on House floor. All sourced to DOJ files and congressional statements." },
+  { date: "Feb 10, 2026", entry: "Wexner profile upgraded: FBI 2019 document explicitly labels him co-conspirator. Previously noted as 'named in FBI email.' Massie forced DOJ unredaction Feb 9." },
+  { date: "Feb 10, 2026", entry: "Maxwell profile updated: pleaded Fifth before House Oversight Feb 10. Attorney offered clemency-for-testimony deal. Status updated to reflect Texas prison transfer and Feb 10 events." },
+  { date: "Feb 10, 2026", entry: "Congressional Tracker major update: added AOC, Mace, Lummis, Moskowitz. Updated Khanna, Massie, Raskin, Comer, Blanche, Patel entries with Feb 9-10 actions." },
+  { date: "Feb 10, 2026", entry: "Added 4 new Government Failures entries, 4 new Consequences, 2 new Contradictions (Blanche transparency claim, Patel perjury question), 4 new Unanswered Questions." },
+  { date: "Feb 10, 2026", entry: "Kash Patel contradiction noted: testified no knowledge of other sex traffickers vs. FBI's own 2019 document labeling Wexner. Noted as potential perjury question, not confirmed." },
 ];
 
 
@@ -1143,6 +1197,14 @@ export default function EpsteinIndex() {
   const [navOpen, setNavOpen] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [globalSearch, setGlobalSearch] = useState("");
+  const [searchQuery, setSearchQuery] = useState("");
+  const searchTimer = useRef(null);
+  const handleSearch = useCallback((e) => {
+    const val = e.target.value;
+    setGlobalSearch(val);
+    if (searchTimer.current) clearTimeout(searchTimer.current);
+    searchTimer.current = setTimeout(() => setSearchQuery(val), 350);
+  }, []);
 
   const profile = P[ap];
   const keys = Object.keys(P);
@@ -1176,16 +1238,16 @@ export default function EpsteinIndex() {
     return f;
   };
 
-  const go = (id) => { setAp(id); setExp(null); setTab("timeline"); setFConv("all"); setFType("all"); setComp(null); setPage("profiles"); setGlobalSearch(""); };
+  const go = (id) => { setAp(id); setExp(null); setTab("timeline"); setFConv("all"); setFType("all"); setComp(null); setPage("profiles"); setGlobalSearch(""); setSearchQuery(""); };
 
   // ═══ GLOBAL SEARCH ENGINE ═══
   const searchResults = useMemo(() => {
     try {
-      const q = globalSearch.toLowerCase().trim();
+      const q = searchQuery.toLowerCase().trim();
       if (q.length < 3) return null;
       const results = { profiles: [], events: [], contradictions: [], consequences: [], money: [], unanswered: [], congress: [], corporate: [], power: [], govfailures: [] };
       const match = (text) => { try { return text && String(text).toLowerCase().includes(q); } catch(e) { return false; } };
-      const safe = (val) => val == null ? "" : String(val);
+      const safe = (val) => (val === null || val === undefined) ? "" : String(val);
       Object.entries(P).forEach(([id, p]) => {
         if (match(p.name) || match(p.sum) || match(p.role) || match(p.cat) || match(p.prev)) {
           results.profiles.push({ id, name: safe(p.name), role: safe(p.role), cat: safe(p.cat) });
@@ -1202,8 +1264,8 @@ export default function EpsteinIndex() {
         }
       });
       CONSEQUENCES.forEach(c => {
-        if (match(c.name) || match(c.detail) || match(c.position)) {
-          results.consequences.push({ name: safe(c.name), detail: safe(c.detail), date: safe(c.date) });
+        if (match(c.name) || match(c.action) || match(c.role)) {
+          results.consequences.push({ name: safe(c.name), detail: safe(c.action), date: safe(c.date) });
         }
       });
       MONEY_TOTALS.forEach(m => {
@@ -1232,14 +1294,14 @@ export default function EpsteinIndex() {
         }
       });
       GOV_FAILURES.forEach(g => {
-        if (match(g.event) || match(g.detail)) {
-          results.govfailures.push({ date: safe(g.date), event: safe(g.event) });
+        if (match(g.title) || match(g.desc)) {
+          results.govfailures.push({ date: safe(g.date), event: safe(g.title) });
         }
       });
       const total = Object.values(results).reduce((a, arr) => a + arr.length, 0);
       return { ...results, total, query: q };
     } catch(e) { return null; }
-  }, [globalSearch]);
+  }, [searchQuery]);
 
   const ProfileImg = ({ id, size = 44 }) => {
     const url = PHOTOS[id];
@@ -1273,7 +1335,15 @@ export default function EpsteinIndex() {
           <div style={{ fontFamily: sans, fontSize: 11, letterSpacing: "0.25em", color: gold, textTransform: "uppercase", marginBottom: 16 }}>A Public Accountability Project</div>
           <h1 style={{ fontSize: "clamp(36px, 6vw, 64px)", fontWeight: 900, lineHeight: 1.05, marginBottom: 24, letterSpacing: "-0.02em" }}>The Epstein<br />Index</h1>
           <p style={{ fontSize: 18, lineHeight: 1.8, color: "#999", maxWidth: 620, marginBottom: 20, fontFamily: sans }}>A sourced, transparent investigation into the public figures named in the Epstein files — and the tax dollars that flow to them.</p>
-          <p style={{ fontSize: 14, lineHeight: 1.7, color: "#777", maxWidth: 620, marginBottom: 40, fontFamily: sans }}>Being named in these files does not imply criminal conduct. But when individuals who maintained documented relationships with a convicted sex offender currently control billions in public money, taxpayers have the right to know. That is accountability.</p>
+          <p style={{ fontSize: 14, lineHeight: 1.7, color: "#777", maxWidth: 620, marginBottom: 20, fontFamily: sans }}>Being named in these files does not imply criminal conduct. But when individuals who maintained documented relationships with a convicted sex offender currently control billions in public money, taxpayers have the right to know. That is accountability.</p>
+          <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 40, fontFamily: mono, flexWrap: "wrap" }}>
+            <span style={{ fontSize: 11, color: "#555" }}>Last updated:</span>
+            <span style={{ fontSize: 11, color: gold, fontWeight: 700 }}>Feb 10, 2026 · 2:45 PM ET</span>
+            <span style={{ fontSize: 11, color: "#444" }}>·</span>
+            <span style={{ fontSize: 11, color: "#555" }}>{Object.keys(P).length} profiles tracked</span>
+            <span style={{ fontSize: 11, color: "#444" }}>·</span>
+            <span style={{ fontSize: 11, color: "#555" }}>{CORRECTIONS_LOG.length} log entries</span>
+          </div>
 
           {/* ═══ GLOBAL SEARCH BAR ═══ */}
           <div style={{ position: "relative", marginBottom: 40, maxWidth: 620, zIndex: 30 }}>
@@ -1282,18 +1352,19 @@ export default function EpsteinIndex() {
               <input
                 data-search="true"
                 value={globalSearch}
-                onChange={e => setGlobalSearch(e.target.value)}
+                onChange={handleSearch}
                 placeholder="Search names, events, documents, connections..."
                 autoComplete="off"
                 autoCorrect="off"
                 autoCapitalize="off"
                 spellCheck="false"
-                style={{ width: "100%", padding: "16px 16px 16px 48px", background: "#111114", border: `2px solid ${globalSearch.length > 2 ? gold : "#1e1e24"}`, borderRadius: 8, color: "#e2e2e8", fontFamily: sans, fontSize: 16, outline: "none", transition: "border-color 0.2s" }}
+                style={{ width: "100%", padding: "16px 16px 16px 48px", background: "#111114", border: `2px solid ${searchResults ? gold : "#1e1e24"}`, borderRadius: 8, color: "#e2e2e8", fontFamily: sans, fontSize: 16, outline: "none", transition: "border-color 0.2s" }}
               />
-              {globalSearch && <button onClick={() => setGlobalSearch("")} style={{ position: "absolute", right: 14, top: "50%", transform: "translateY(-50%)", background: "none", border: "none", color: "#666", cursor: "pointer", fontSize: 18, fontFamily: sans }}>✕</button>}
+              {globalSearch && <button onClick={() => { setGlobalSearch(""); setSearchQuery(""); if (searchTimer.current) clearTimeout(searchTimer.current); }} style={{ position: "absolute", right: 14, top: "50%", transform: "translateY(-50%)", background: "none", border: "none", color: "#666", cursor: "pointer", fontSize: 18, fontFamily: sans }}>✕</button>}
             </div>
 
             {/* ═══ SEARCH RESULTS (absolute overlay — prevents Android keyboard dismiss) ═══ */}
+            <SearchErrorBoundary>
             {searchResults && searchResults.total > 0 && (
               <div style={{ position: "absolute", top: "100%", left: 0, right: 0, marginTop: 8, background: "#111114", border: `1px solid ${gold}40`, borderRadius: 8, maxHeight: "60vh", overflowY: "auto", boxShadow: "0 8px 32px rgba(0,0,0,0.8)", zIndex: 31 }}>
                 <div style={{ padding: "12px 16px", borderBottom: "1px solid #1e1e24", display: "flex", justifyContent: "space-between", alignItems: "center", position: "sticky", top: 0, background: "#111114", zIndex: 2 }}>
@@ -1305,7 +1376,7 @@ export default function EpsteinIndex() {
                     <div style={{ fontSize: 9, fontWeight: 700, color: "#f59e0b", letterSpacing: "0.15em", textTransform: "uppercase", marginBottom: 6, fontFamily: sans }}>👤 Profiles ({searchResults.profiles.length})</div>
                     {searchResults.profiles.slice(0, 8).map((r, i) => (
                       <button key={i} onClick={() => go(r.id)} style={{ display: "flex", alignItems: "center", gap: 10, width: "100%", padding: "8px 4px", background: "none", border: "none", borderBottom: "1px solid #0e0e12", cursor: "pointer", textAlign: "left" }}>
-                        <ProfileImg id={r.id} size={32} />
+                        <div style={{ width: 32, height: 32, borderRadius: "50%", background: "#1a1a2e", border: `2px solid ${gold}`, display: "flex", alignItems: "center", justifyContent: "center", fontFamily: sans, fontSize: 10, fontWeight: 700, color: gold, flexShrink: 0 }}>{(P[r.id]?.init) || "?"}</div>
                         <div>
                           <div style={{ fontSize: 13, fontWeight: 700, color: "#e2e2e8", fontFamily: sans }}>{r.name}</div>
                           <div style={{ fontSize: 10, color: "#888", fontFamily: sans }}>{r.role} · {r.cat}</div>
@@ -1331,7 +1402,7 @@ export default function EpsteinIndex() {
                   <div style={{ padding: "8px 16px", borderTop: "1px solid #1e1e24" }}>
                     <div style={{ fontSize: 9, fontWeight: 700, color: "#ef4444", letterSpacing: "0.15em", textTransform: "uppercase", marginBottom: 6, fontFamily: sans }}>🔄 Contradictions ({searchResults.contradictions.length})</div>
                     {searchResults.contradictions.slice(0, 5).map((r, i) => (
-                      <button key={i} onClick={() => { setPage("contradictions"); setGlobalSearch(""); }} style={{ display: "block", width: "100%", padding: "6px 4px", background: "none", border: "none", borderBottom: "1px solid #0e0e12", cursor: "pointer", textAlign: "left" }}>
+                      <button key={i} onClick={() => { setPage("contradictions"); setGlobalSearch(""); setSearchQuery(""); }} style={{ display: "block", width: "100%", padding: "6px 4px", background: "none", border: "none", borderBottom: "1px solid #0e0e12", cursor: "pointer", textAlign: "left" }}>
                         <div style={{ fontSize: 12, fontWeight: 600, color: "#ddd", fontFamily: sans }}>{r.name}</div>
                         <div style={{ fontSize: 11, color: "#ef4444", fontFamily: sans }}>Claimed: {(r.claim || "").slice(0, 80)}{(r.claim || "").length > 80 ? "..." : ""}</div>
                       </button>
@@ -1343,7 +1414,7 @@ export default function EpsteinIndex() {
                   <div style={{ padding: "8px 16px", borderTop: "1px solid #1e1e24" }}>
                     <div style={{ fontSize: 9, fontWeight: 700, color: "#22c55e", letterSpacing: "0.15em", textTransform: "uppercase", marginBottom: 6, fontFamily: sans }}>💰 Money Trail ({searchResults.money.length})</div>
                     {searchResults.money.slice(0, 5).map((r, i) => (
-                      <button key={i} onClick={() => { setPage("money"); setGlobalSearch(""); }} style={{ display: "block", width: "100%", padding: "6px 4px", background: "none", border: "none", borderBottom: "1px solid #0e0e12", cursor: "pointer", textAlign: "left" }}>
+                      <button key={i} onClick={() => { setPage("money"); setGlobalSearch(""); setSearchQuery(""); }} style={{ display: "block", width: "100%", padding: "6px 4px", background: "none", border: "none", borderBottom: "1px solid #0e0e12", cursor: "pointer", textAlign: "left" }}>
                         <div style={{ fontSize: 12, fontWeight: 600, color: "#ddd", fontFamily: sans }}>{r.entity} — <span style={{ color: "#22c55e" }}>{r.amount}</span></div>
                         <div style={{ fontSize: 11, color: "#777", fontFamily: sans }}>{(r.detail || "").slice(0, 100)}{(r.detail || "").length > 100 ? "..." : ""}</div>
                       </button>
@@ -1355,7 +1426,7 @@ export default function EpsteinIndex() {
                   <div style={{ padding: "8px 16px", borderTop: "1px solid #1e1e24" }}>
                     <div style={{ fontSize: 9, fontWeight: 700, color: "#a855f7", letterSpacing: "0.15em", textTransform: "uppercase", marginBottom: 6, fontFamily: sans }}>📉 Consequences ({searchResults.consequences.length})</div>
                     {searchResults.consequences.slice(0, 5).map((r, i) => (
-                      <button key={i} onClick={() => { setPage("consequences"); setGlobalSearch(""); }} style={{ display: "block", width: "100%", padding: "6px 4px", background: "none", border: "none", borderBottom: "1px solid #0e0e12", cursor: "pointer", textAlign: "left" }}>
+                      <button key={i} onClick={() => { setPage("consequences"); setGlobalSearch(""); setSearchQuery(""); }} style={{ display: "block", width: "100%", padding: "6px 4px", background: "none", border: "none", borderBottom: "1px solid #0e0e12", cursor: "pointer", textAlign: "left" }}>
                         <div style={{ fontSize: 12, fontWeight: 600, color: "#ddd", fontFamily: sans }}>{r.name} <span style={{ fontSize: 10, color: "#666" }}>— {r.date}</span></div>
                         <div style={{ fontSize: 11, color: "#777", fontFamily: sans }}>{(r.detail || "").slice(0, 100)}{(r.detail || "").length > 100 ? "..." : ""}</div>
                       </button>
@@ -1367,7 +1438,7 @@ export default function EpsteinIndex() {
                   <div style={{ padding: "8px 16px", borderTop: "1px solid #1e1e24" }}>
                     <div style={{ fontSize: 9, fontWeight: 700, color: "#f59e0b", letterSpacing: "0.15em", textTransform: "uppercase", marginBottom: 6, fontFamily: sans }}>🏢 Corporate ({searchResults.corporate.length})</div>
                     {searchResults.corporate.slice(0, 5).map((r, i) => (
-                      <button key={i} onClick={() => { setPage("corporate"); setGlobalSearch(""); }} style={{ display: "block", width: "100%", padding: "6px 4px", background: "none", border: "none", borderBottom: "1px solid #0e0e12", cursor: "pointer", textAlign: "left" }}>
+                      <button key={i} onClick={() => { setPage("corporate"); setGlobalSearch(""); setSearchQuery(""); }} style={{ display: "block", width: "100%", padding: "6px 4px", background: "none", border: "none", borderBottom: "1px solid #0e0e12", cursor: "pointer", textAlign: "left" }}>
                         <div style={{ fontSize: 12, fontWeight: 600, color: "#ddd", fontFamily: sans }}>{r.name} — {r.settlement}</div>
                       </button>
                     ))}
@@ -1378,7 +1449,7 @@ export default function EpsteinIndex() {
                   <div style={{ padding: "8px 16px", borderTop: "1px solid #1e1e24" }}>
                     <div style={{ fontSize: 9, fontWeight: 700, color: "#6b7280", letterSpacing: "0.15em", textTransform: "uppercase", marginBottom: 6, fontFamily: sans }}>⚖️ Gov Failures ({searchResults.govfailures.length})</div>
                     {searchResults.govfailures.slice(0, 5).map((r, i) => (
-                      <button key={i} onClick={() => { setPage("govfailures"); setGlobalSearch(""); }} style={{ display: "block", width: "100%", padding: "6px 4px", background: "none", border: "none", borderBottom: "1px solid #0e0e12", cursor: "pointer", textAlign: "left" }}>
+                      <button key={i} onClick={() => { setPage("govfailures"); setGlobalSearch(""); setSearchQuery(""); }} style={{ display: "block", width: "100%", padding: "6px 4px", background: "none", border: "none", borderBottom: "1px solid #0e0e12", cursor: "pointer", textAlign: "left" }}>
                         <div style={{ fontSize: 12, fontWeight: 600, color: "#ddd", fontFamily: sans }}>{r.date}: {r.event}</div>
                       </button>
                     ))}
@@ -1389,7 +1460,7 @@ export default function EpsteinIndex() {
                   <div style={{ padding: "8px 16px", borderTop: "1px solid #1e1e24" }}>
                     <div style={{ fontSize: 9, fontWeight: 700, color: "#ec4899", letterSpacing: "0.15em", textTransform: "uppercase", marginBottom: 6, fontFamily: sans }}>❓ Unanswered ({searchResults.unanswered.length})</div>
                     {searchResults.unanswered.slice(0, 5).map((r, i) => (
-                      <button key={i} onClick={() => { setPage("unanswered"); setGlobalSearch(""); }} style={{ display: "block", width: "100%", padding: "6px 4px", background: "none", border: "none", borderBottom: "1px solid #0e0e12", cursor: "pointer", textAlign: "left" }}>
+                      <button key={i} onClick={() => { setPage("unanswered"); setGlobalSearch(""); setSearchQuery(""); }} style={{ display: "block", width: "100%", padding: "6px 4px", background: "none", border: "none", borderBottom: "1px solid #0e0e12", cursor: "pointer", textAlign: "left" }}>
                         <div style={{ fontSize: 12, fontWeight: 600, color: "#ddd", fontFamily: sans }}>{r.question}</div>
                       </button>
                     ))}
@@ -1400,7 +1471,7 @@ export default function EpsteinIndex() {
                   <div style={{ padding: "8px 16px", borderTop: "1px solid #1e1e24" }}>
                     <div style={{ fontSize: 9, fontWeight: 700, color: "#6b9eff", letterSpacing: "0.15em", textTransform: "uppercase", marginBottom: 6, fontFamily: sans }}>🏛 Congress ({searchResults.congress.length})</div>
                     {searchResults.congress.slice(0, 5).map((r, i) => (
-                      <button key={i} onClick={() => { setPage("congress"); setGlobalSearch(""); }} style={{ display: "block", width: "100%", padding: "6px 4px", background: "none", border: "none", borderBottom: "1px solid #0e0e12", cursor: "pointer", textAlign: "left" }}>
+                      <button key={i} onClick={() => { setPage("congress"); setGlobalSearch(""); setSearchQuery(""); }} style={{ display: "block", width: "100%", padding: "6px 4px", background: "none", border: "none", borderBottom: "1px solid #0e0e12", cursor: "pointer", textAlign: "left" }}>
                         <div style={{ fontSize: 12, fontWeight: 600, color: "#ddd", fontFamily: sans }}>{r.name}</div>
                         <div style={{ fontSize: 11, color: "#777", fontFamily: sans }}>{(r.action || "").slice(0, 100)}{(r.action || "").length > 100 ? "..." : ""}</div>
                       </button>
@@ -1428,6 +1499,7 @@ export default function EpsteinIndex() {
                 <div style={{ fontSize: 12, color: "#555", fontFamily: sans }}>Try searching for a name, organization, event, or topic</div>
               </div>
             )}
+            </SearchErrorBoundary>
           </div>
 
           {/* Victim-Centered Counter */}
@@ -1850,9 +1922,9 @@ export default function EpsteinIndex() {
                 <div style={{ padding: "12px 16px", borderBottom: "1px solid #1e1e24", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
                   <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
                     <ProfileImg id={c.profileId} size={28} />
-                    <span style={{ fontWeight: 700, fontSize: 14 }}>{P[c.profileId]?.name}</span>
+                    <span style={{ fontWeight: 700, fontSize: 14 }}>{P[c.profileId]?.name || c.person?.replace(/-/g, " ").replace(/\b\w/g, l => l.toUpperCase())}</span>
                   </div>
-                  <button onClick={() => go(c.profileId)} style={{ fontSize: 9, color: gold, background: "none", border: `1px solid ${gold}`, borderRadius: 3, padding: "2px 8px", cursor: "pointer" }}>Full Profile →</button>
+                  {c.profileId && <button onClick={() => go(c.profileId)} style={{ fontSize: 9, color: gold, background: "none", border: `1px solid ${gold}`, borderRadius: 3, padding: "2px 8px", cursor: "pointer" }}>Full Profile →</button>}
                 </div>
                 <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 0 }}>
                   <div style={{ padding: 14, borderRight: "1px solid #1e1e24" }}>
