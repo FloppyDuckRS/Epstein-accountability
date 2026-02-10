@@ -1282,7 +1282,7 @@ export default function EpsteinIndex() {
           <p style={{ fontSize: 14, lineHeight: 1.7, color: "#777", maxWidth: 620, marginBottom: 40, fontFamily: sans }}>Being named in these files does not imply criminal conduct. But when individuals who maintained documented relationships with a convicted sex offender currently control billions in public money, taxpayers have the right to know. That is accountability.</p>
 
           {/* ═══ GLOBAL SEARCH BAR ═══ */}
-          <div style={{ position: "relative", marginBottom: 40, maxWidth: 620 }}>
+          <div style={{ position: "relative", marginBottom: 40, maxWidth: 620, zIndex: 30 }}>
             <div style={{ position: "relative" }}>
               <span style={{ position: "absolute", left: 16, top: "50%", transform: "translateY(-50%)", fontSize: 18, opacity: 0.5 }}>🔍</span>
               <input
@@ -1290,17 +1290,18 @@ export default function EpsteinIndex() {
                 value={globalSearch}
                 onChange={e => setGlobalSearch(e.target.value)}
                 placeholder="Search names, events, documents, connections..."
+                autoComplete="off"
+                autoCorrect="off"
+                autoCapitalize="off"
+                spellCheck="false"
                 style={{ width: "100%", padding: "16px 16px 16px 48px", background: "#111114", border: `2px solid ${globalSearch.length > 1 ? gold : "#1e1e24"}`, borderRadius: 8, color: "#e2e2e8", fontFamily: sans, fontSize: 16, outline: "none", transition: "border-color 0.2s" }}
               />
               {globalSearch && <button onClick={() => setGlobalSearch("")} style={{ position: "absolute", right: 14, top: "50%", transform: "translateY(-50%)", background: "none", border: "none", color: "#666", cursor: "pointer", fontSize: 18, fontFamily: sans }}>✕</button>}
             </div>
-            {globalSearch.length > 0 && globalSearch.length < 2 && (
-              <div style={{ padding: "8px 16px", fontSize: 12, color: "#666", fontFamily: sans }}>Type at least 2 characters to search...</div>
-            )}
 
-            {/* ═══ SEARCH RESULTS ═══ */}
+            {/* ═══ SEARCH RESULTS (absolute overlay — prevents Android keyboard dismiss) ═══ */}
             {searchResults && searchResults.total > 0 && (
-              <div style={{ marginTop: 8, background: "#111114", border: `1px solid ${gold}40`, borderRadius: 8, maxHeight: "70vh", overflowY: "auto", boxShadow: `0 8px 32px rgba(0,0,0,0.5)` }}>
+              <div style={{ position: "absolute", top: "100%", left: 0, right: 0, marginTop: 8, background: "#111114", border: `1px solid ${gold}40`, borderRadius: 8, maxHeight: "60vh", overflowY: "auto", boxShadow: "0 8px 32px rgba(0,0,0,0.8)", zIndex: 31 }}>
                 <div style={{ padding: "12px 16px", borderBottom: "1px solid #1e1e24", display: "flex", justifyContent: "space-between", alignItems: "center", position: "sticky", top: 0, background: "#111114", zIndex: 2 }}>
                   <span style={{ fontFamily: sans, fontSize: 13, color: gold, fontWeight: 700 }}>{searchResults.total} results for "{searchResults.query}"</span>
                 </div>
@@ -1438,7 +1439,7 @@ export default function EpsteinIndex() {
             )}
 
             {searchResults && searchResults.total === 0 && (
-              <div style={{ marginTop: 8, padding: 20, background: "#111114", border: "1px solid #1e1e24", borderRadius: 8, textAlign: "center" }}>
+              <div style={{ position: "absolute", top: "100%", left: 0, right: 0, marginTop: 8, padding: 20, background: "#111114", border: "1px solid #1e1e24", borderRadius: 8, textAlign: "center", zIndex: 31, boxShadow: "0 8px 32px rgba(0,0,0,0.8)" }}>
                 <div style={{ fontSize: 14, color: "#666", fontFamily: sans, marginBottom: 4 }}>No results for "{searchResults.query}"</div>
                 <div style={{ fontSize: 12, color: "#555", fontFamily: sans }}>Try searching for a name, organization, event, or topic</div>
               </div>
