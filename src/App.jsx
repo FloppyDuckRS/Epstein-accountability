@@ -1142,6 +1142,7 @@ export default function EpsteinIndex() {
   const [actionExpanded, setActionExpanded] = useState(null);
   const [navOpen, setNavOpen] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [globalSearch, setGlobalSearch] = useState("");
 
   const profile = P[ap];
   const keys = Object.keys(P);
@@ -1175,7 +1176,76 @@ export default function EpsteinIndex() {
     return f;
   };
 
-  const go = (id) => { setAp(id); setExp(null); setTab("timeline"); setFConv("all"); setFType("all"); setComp(null); setPage("profiles"); };
+  const go = (id) => { setAp(id); setExp(null); setTab("timeline"); setFConv("all"); setFType("all"); setComp(null); setPage("profiles"); setGlobalSearch(""); };
+
+  // ═══ GLOBAL SEARCH ENGINE ═══
+  const searchResults = useMemo(() => {
+    const q = globalSearch.toLowerCase().trim();
+    if (q.length < 2) return null;
+    const results = { profiles: [], events: [], contradictions: [], consequences: [], money: [], unanswered: [], congress: [], corporate: [], power: [], govfailures: [] };
+    const match = (text) => text && text.toLowerCase().includes(q);
+    // Profiles + their timeline events
+    Object.entries(P).forEach(([id, p]) => {
+      if (match(p.name) || match(p.sum) || match(p.role) || match(p.cat) || match(p.prev)) {
+        results.profiles.push({ id, name: p.name, role: p.role, cat: p.cat, sum: p.sum });
+      }
+      (p.tl || []).forEach(ev => {
+        if (match(ev.title) || match(ev.desc) || match(ev.source)) {
+          results.events.push({ profileId: id, profileName: p.name, date: ev.date, title: ev.title, desc: ev.desc, type: ev.type });
+        }
+      });
+    });
+    // Contradictions
+    CONTRADICTIONS.forEach(c => {
+      if (match(c.claim) || match(c.evidence) || match(P[c.profileId]?.name)) {
+        results.contradictions.push({ ...c, name: P[c.profileId]?.name || c.person });
+      }
+    });
+    // Consequences
+    CONSEQUENCES.forEach(c => {
+      if (match(c.name) || match(c.detail) || match(c.position)) {
+        results.consequences.push(c);
+      }
+    });
+    // Money
+    MONEY_TOTALS.forEach(m => {
+      if (match(m.entity) || match(m.detail) || match(m.amount)) {
+        results.money.push(m);
+      }
+    });
+    // Unanswered
+    UNANSWERED.forEach(u => {
+      if (match(u.question) || match(u.context)) {
+        results.unanswered.push(u);
+      }
+    });
+    // Congressional
+    CONGRESSIONAL.forEach(c => {
+      if (match(c.name) || match(c.action)) {
+        results.congress.push(c);
+      }
+    });
+    // Corporate
+    CORPORATE_ENABLERS.forEach(c => {
+      if (match(c.name) || match(c.detail) || match(c.role) || (c.key_people || []).some(kp => match(kp))) {
+        results.corporate.push(c);
+      }
+    });
+    // Still in Power
+    STILL_IN_POWER.forEach(s => {
+      if (match(P[s.id]?.name) || match(s.position) || match(s.controls)) {
+        results.power.push({ ...s, name: P[s.id]?.name || s.id });
+      }
+    });
+    // Gov Failures
+    GOV_FAILURES.forEach(g => {
+      if (match(g.event) || match(g.detail)) {
+        results.govfailures.push(g);
+      }
+    });
+    const total = Object.values(results).reduce((a, arr) => a + arr.length, 0);
+    return { ...results, total, query: q };
+  }, [globalSearch]);
 
   const ProfileImg = ({ id, size = 44 }) => {
     const url = PHOTOS[id];
@@ -1209,7 +1279,171 @@ export default function EpsteinIndex() {
           <div style={{ fontFamily: sans, fontSize: 11, letterSpacing: "0.25em", color: gold, textTransform: "uppercase", marginBottom: 16 }}>A Public Accountability Project</div>
           <h1 style={{ fontSize: "clamp(36px, 6vw, 64px)", fontWeight: 900, lineHeight: 1.05, marginBottom: 24, letterSpacing: "-0.02em" }}>The Epstein<br />Index</h1>
           <p style={{ fontSize: 18, lineHeight: 1.8, color: "#999", maxWidth: 620, marginBottom: 20, fontFamily: sans }}>A sourced, transparent investigation into the public figures named in the Epstein files — and the tax dollars that flow to them.</p>
-          <p style={{ fontSize: 14, lineHeight: 1.7, color: "#777", maxWidth: 620, marginBottom: 40, fontFamily: sans }}>Being named in these files does not imply criminal conduct. But when individuals who maintained documented relationships with a convicted sex offender currently control billions in public money, taxpayers have the right to know. That's accountability.</p>
+          <p style={{ fontSize: 14, lineHeight: 1.7, color: "#777", maxWidth: 620, marginBottom: 40, fontFamily: sans }}>Being named in these files does not imply criminal conduct. But when individuals who maintained documented relationships with a convicted sex offender currently control billions in public money, taxpayers have the right to know. That is accountability.</p>
+
+          {/* ═══ GLOBAL SEARCH BAR ═══ */}
+          <div style={{ position: "relative", marginBottom: 40, maxWidth: 620 }}>
+            <div style={{ position: "relative" }}>
+              <span style={{ position: "absolute", left: 16, top: "50%", transform: "translateY(-50%)", fontSize: 18, opacity: 0.5 }}>🔍</span>
+              <input
+                data-search="true"
+                value={globalSearch}
+                onChange={e => setGlobalSearch(e.target.value)}
+                placeholder="Search names, events, documents, connections..."
+                style={{ width: "100%", padding: "16px 16px 16px 48px", background: "#111114", border: `2px solid ${globalSearch.length > 1 ? gold : "#1e1e24"}`, borderRadius: 8, color: "#e2e2e8", fontFamily: sans, fontSize: 16, outline: "none", transition: "border-color 0.2s" }}
+              />
+              {globalSearch && <button onClick={() => setGlobalSearch("")} style={{ position: "absolute", right: 14, top: "50%", transform: "translateY(-50%)", background: "none", border: "none", color: "#666", cursor: "pointer", fontSize: 18, fontFamily: sans }}>✕</button>}
+            </div>
+            {globalSearch.length > 0 && globalSearch.length < 2 && (
+              <div style={{ padding: "8px 16px", fontSize: 12, color: "#666", fontFamily: sans }}>Type at least 2 characters to search...</div>
+            )}
+
+            {/* ═══ SEARCH RESULTS ═══ */}
+            {searchResults && searchResults.total > 0 && (
+              <div style={{ marginTop: 8, background: "#111114", border: `1px solid ${gold}40`, borderRadius: 8, maxHeight: "70vh", overflowY: "auto", boxShadow: `0 8px 32px rgba(0,0,0,0.5)` }}>
+                <div style={{ padding: "12px 16px", borderBottom: "1px solid #1e1e24", display: "flex", justifyContent: "space-between", alignItems: "center", position: "sticky", top: 0, background: "#111114", zIndex: 2 }}>
+                  <span style={{ fontFamily: sans, fontSize: 13, color: gold, fontWeight: 700 }}>{searchResults.total} results for "{searchResults.query}"</span>
+                </div>
+
+                {/* Profile matches */}
+                {searchResults.profiles.length > 0 && (
+                  <div style={{ padding: "8px 16px" }}>
+                    <div style={{ fontSize: 9, fontWeight: 700, color: "#f59e0b", letterSpacing: "0.15em", textTransform: "uppercase", marginBottom: 6, fontFamily: sans }}>👤 Profiles ({searchResults.profiles.length})</div>
+                    {searchResults.profiles.slice(0, 8).map((r, i) => (
+                      <button key={i} onClick={() => go(r.id)} style={{ display: "flex", alignItems: "center", gap: 10, width: "100%", padding: "8px 4px", background: "none", border: "none", borderBottom: "1px solid #0e0e12", cursor: "pointer", textAlign: "left" }}>
+                        <ProfileImg id={r.id} size={32} />
+                        <div>
+                          <div style={{ fontSize: 13, fontWeight: 700, color: "#e2e2e8", fontFamily: sans }}>{r.name}</div>
+                          <div style={{ fontSize: 10, color: "#888", fontFamily: sans }}>{r.role} · {r.cat}</div>
+                        </div>
+                      </button>
+                    ))}
+                  </div>
+                )}
+
+                {/* Timeline event matches */}
+                {searchResults.events.length > 0 && (
+                  <div style={{ padding: "8px 16px", borderTop: "1px solid #1e1e24" }}>
+                    <div style={{ fontSize: 9, fontWeight: 700, color: "#3b82f6", letterSpacing: "0.15em", textTransform: "uppercase", marginBottom: 6, fontFamily: sans }}>📅 Timeline Events ({searchResults.events.length})</div>
+                    {searchResults.events.slice(0, 10).map((r, i) => (
+                      <button key={i} onClick={() => go(r.profileId)} style={{ display: "block", width: "100%", padding: "6px 4px", background: "none", border: "none", borderBottom: "1px solid #0e0e12", cursor: "pointer", textAlign: "left" }}>
+                        <div style={{ fontSize: 12, fontWeight: 600, color: "#ddd", fontFamily: sans }}>{r.title} <span style={{ fontSize: 10, color: "#666" }}>— {r.profileName}, {r.date}</span></div>
+                        <div style={{ fontSize: 11, color: "#777", fontFamily: sans, lineHeight: 1.4, marginTop: 2 }}>{r.desc.length > 120 ? r.desc.slice(0, 120) + "..." : r.desc}</div>
+                      </button>
+                    ))}
+                  </div>
+                )}
+
+                {/* Contradiction matches */}
+                {searchResults.contradictions.length > 0 && (
+                  <div style={{ padding: "8px 16px", borderTop: "1px solid #1e1e24" }}>
+                    <div style={{ fontSize: 9, fontWeight: 700, color: "#ef4444", letterSpacing: "0.15em", textTransform: "uppercase", marginBottom: 6, fontFamily: sans }}>🔄 Contradictions ({searchResults.contradictions.length})</div>
+                    {searchResults.contradictions.slice(0, 5).map((r, i) => (
+                      <button key={i} onClick={() => { setPage("contradictions"); setGlobalSearch(""); }} style={{ display: "block", width: "100%", padding: "6px 4px", background: "none", border: "none", borderBottom: "1px solid #0e0e12", cursor: "pointer", textAlign: "left" }}>
+                        <div style={{ fontSize: 12, fontWeight: 600, color: "#ddd", fontFamily: sans }}>{r.name}</div>
+                        <div style={{ fontSize: 11, color: "#ef4444", fontFamily: sans }}>Claimed: {r.claim.length > 80 ? r.claim.slice(0, 80) + "..." : r.claim}</div>
+                      </button>
+                    ))}
+                  </div>
+                )}
+
+                {/* Money matches */}
+                {searchResults.money.length > 0 && (
+                  <div style={{ padding: "8px 16px", borderTop: "1px solid #1e1e24" }}>
+                    <div style={{ fontSize: 9, fontWeight: 700, color: "#22c55e", letterSpacing: "0.15em", textTransform: "uppercase", marginBottom: 6, fontFamily: sans }}>💰 Money Trail ({searchResults.money.length})</div>
+                    {searchResults.money.slice(0, 5).map((r, i) => (
+                      <button key={i} onClick={() => { setPage("money"); setGlobalSearch(""); }} style={{ display: "block", width: "100%", padding: "6px 4px", background: "none", border: "none", borderBottom: "1px solid #0e0e12", cursor: "pointer", textAlign: "left" }}>
+                        <div style={{ fontSize: 12, fontWeight: 600, color: "#ddd", fontFamily: sans }}>{r.entity} — <span style={{ color: "#22c55e" }}>{r.amount}</span></div>
+                        <div style={{ fontSize: 11, color: "#777", fontFamily: sans }}>{r.detail.length > 100 ? r.detail.slice(0, 100) + "..." : r.detail}</div>
+                      </button>
+                    ))}
+                  </div>
+                )}
+
+                {/* Consequences matches */}
+                {searchResults.consequences.length > 0 && (
+                  <div style={{ padding: "8px 16px", borderTop: "1px solid #1e1e24" }}>
+                    <div style={{ fontSize: 9, fontWeight: 700, color: "#a855f7", letterSpacing: "0.15em", textTransform: "uppercase", marginBottom: 6, fontFamily: sans }}>📉 Consequences ({searchResults.consequences.length})</div>
+                    {searchResults.consequences.slice(0, 5).map((r, i) => (
+                      <button key={i} onClick={() => { setPage("consequences"); setGlobalSearch(""); }} style={{ display: "block", width: "100%", padding: "6px 4px", background: "none", border: "none", borderBottom: "1px solid #0e0e12", cursor: "pointer", textAlign: "left" }}>
+                        <div style={{ fontSize: 12, fontWeight: 600, color: "#ddd", fontFamily: sans }}>{r.name} <span style={{ fontSize: 10, color: "#666" }}>— {r.date}</span></div>
+                        <div style={{ fontSize: 11, color: "#777", fontFamily: sans }}>{r.detail.length > 100 ? r.detail.slice(0, 100) + "..." : r.detail}</div>
+                      </button>
+                    ))}
+                  </div>
+                )}
+
+                {/* Corporate matches */}
+                {searchResults.corporate.length > 0 && (
+                  <div style={{ padding: "8px 16px", borderTop: "1px solid #1e1e24" }}>
+                    <div style={{ fontSize: 9, fontWeight: 700, color: "#f59e0b", letterSpacing: "0.15em", textTransform: "uppercase", marginBottom: 6, fontFamily: sans }}>🏢 Corporate ({searchResults.corporate.length})</div>
+                    {searchResults.corporate.slice(0, 5).map((r, i) => (
+                      <button key={i} onClick={() => { setPage("corporate"); setGlobalSearch(""); }} style={{ display: "block", width: "100%", padding: "6px 4px", background: "none", border: "none", borderBottom: "1px solid #0e0e12", cursor: "pointer", textAlign: "left" }}>
+                        <div style={{ fontSize: 12, fontWeight: 600, color: "#ddd", fontFamily: sans }}>{r.name} — {r.settlement}</div>
+                      </button>
+                    ))}
+                  </div>
+                )}
+
+                {/* Gov Failures matches */}
+                {searchResults.govfailures.length > 0 && (
+                  <div style={{ padding: "8px 16px", borderTop: "1px solid #1e1e24" }}>
+                    <div style={{ fontSize: 9, fontWeight: 700, color: "#6b7280", letterSpacing: "0.15em", textTransform: "uppercase", marginBottom: 6, fontFamily: sans }}>⚖️ Gov Failures ({searchResults.govfailures.length})</div>
+                    {searchResults.govfailures.slice(0, 5).map((r, i) => (
+                      <button key={i} onClick={() => { setPage("govfailures"); setGlobalSearch(""); }} style={{ display: "block", width: "100%", padding: "6px 4px", background: "none", border: "none", borderBottom: "1px solid #0e0e12", cursor: "pointer", textAlign: "left" }}>
+                        <div style={{ fontSize: 12, fontWeight: 600, color: "#ddd", fontFamily: sans }}>{r.date}: {r.event}</div>
+                      </button>
+                    ))}
+                  </div>
+                )}
+
+                {/* Unanswered matches */}
+                {searchResults.unanswered.length > 0 && (
+                  <div style={{ padding: "8px 16px", borderTop: "1px solid #1e1e24" }}>
+                    <div style={{ fontSize: 9, fontWeight: 700, color: "#ec4899", letterSpacing: "0.15em", textTransform: "uppercase", marginBottom: 6, fontFamily: sans }}>❓ Unanswered ({searchResults.unanswered.length})</div>
+                    {searchResults.unanswered.slice(0, 5).map((r, i) => (
+                      <button key={i} onClick={() => { setPage("unanswered"); setGlobalSearch(""); }} style={{ display: "block", width: "100%", padding: "6px 4px", background: "none", border: "none", borderBottom: "1px solid #0e0e12", cursor: "pointer", textAlign: "left" }}>
+                        <div style={{ fontSize: 12, fontWeight: 600, color: "#ddd", fontFamily: sans }}>{r.question}</div>
+                      </button>
+                    ))}
+                  </div>
+                )}
+
+                {/* Congress matches */}
+                {searchResults.congress.length > 0 && (
+                  <div style={{ padding: "8px 16px", borderTop: "1px solid #1e1e24" }}>
+                    <div style={{ fontSize: 9, fontWeight: 700, color: "#6b9eff", letterSpacing: "0.15em", textTransform: "uppercase", marginBottom: 6, fontFamily: sans }}>🏛 Congress ({searchResults.congress.length})</div>
+                    {searchResults.congress.slice(0, 5).map((r, i) => (
+                      <button key={i} onClick={() => { setPage("congress"); setGlobalSearch(""); }} style={{ display: "block", width: "100%", padding: "6px 4px", background: "none", border: "none", borderBottom: "1px solid #0e0e12", cursor: "pointer", textAlign: "left" }}>
+                        <div style={{ fontSize: 12, fontWeight: 600, color: "#ddd", fontFamily: sans }}>{r.name}</div>
+                        <div style={{ fontSize: 11, color: "#777", fontFamily: sans }}>{r.action.length > 100 ? r.action.slice(0, 100) + "..." : r.action}</div>
+                      </button>
+                    ))}
+                  </div>
+                )}
+
+                {/* Still in Power matches */}
+                {searchResults.power.length > 0 && (
+                  <div style={{ padding: "8px 16px", borderTop: "1px solid #1e1e24" }}>
+                    <div style={{ fontSize: 9, fontWeight: 700, color: "#ef4444", letterSpacing: "0.15em", textTransform: "uppercase", marginBottom: 6, fontFamily: sans }}>👔 Still in Power ({searchResults.power.length})</div>
+                    {searchResults.power.slice(0, 5).map((r, i) => (
+                      <button key={i} onClick={() => go(r.id)} style={{ display: "block", width: "100%", padding: "6px 4px", background: "none", border: "none", borderBottom: "1px solid #0e0e12", cursor: "pointer", textAlign: "left" }}>
+                        <div style={{ fontSize: 12, fontWeight: 600, color: "#ddd", fontFamily: sans }}>{r.name} — <span style={{ color: "#ef4444" }}>{r.position}</span></div>
+                        <div style={{ fontSize: 11, color: "#777", fontFamily: sans }}>Controls: {r.controls}</div>
+                      </button>
+                    ))}
+                  </div>
+                )}
+              </div>
+            )}
+
+            {searchResults && searchResults.total === 0 && (
+              <div style={{ marginTop: 8, padding: 20, background: "#111114", border: "1px solid #1e1e24", borderRadius: 8, textAlign: "center" }}>
+                <div style={{ fontSize: 14, color: "#666", fontFamily: sans, marginBottom: 4 }}>No results for "{searchResults.query}"</div>
+                <div style={{ fontSize: 12, color: "#555", fontFamily: sans }}>Try searching for a name, organization, event, or topic</div>
+              </div>
+            )}
+          </div>
 
           {/* Victim-Centered Counter */}
           <div style={{ padding: 20, background: "linear-gradient(135deg, #1a0a0a, #0a0a0c)", border: "1px solid #3b1a1a", borderRadius: 8, marginBottom: 32, position: "relative", overflow: "hidden" }}>
@@ -1365,7 +1599,10 @@ export default function EpsteinIndex() {
           <button key={p} onClick={() => { setPage(p); setNavOpen(false); }} style={{ padding: "4px 8px", background: page === p ? "rgba(201,162,39,0.15)" : "none", border: "none", color: page === p ? gold : "#777", cursor: "pointer", fontFamily: sans, fontSize: 11, borderRadius: 4, fontWeight: page === p ? 700 : 400, whiteSpace: "nowrap" }}>{l}</button>
         ))}
       </div>
-      <div style={{ fontFamily: mono, fontSize: 9, color: "#444", whiteSpace: "nowrap", marginLeft: 8 }}>{keys.length} profiles</div>
+      <div style={{ display: "flex", alignItems: "center", gap: 6, whiteSpace: "nowrap", marginLeft: 8 }}>
+        <button onClick={() => { setPage("landing"); setTimeout(() => { const el = document.querySelector("[data-search]"); if (el) el.focus(); }, 100); }} style={{ background: "none", border: `1px solid #333`, borderRadius: 4, padding: "3px 8px", cursor: "pointer", color: "#666", fontFamily: sans, fontSize: 10, display: "flex", alignItems: "center", gap: 4 }} onMouseEnter={e => e.currentTarget.style.borderColor = gold} onMouseLeave={e => e.currentTarget.style.borderColor = "#333"}>🔍 Search</button>
+        <div style={{ fontFamily: mono, fontSize: 9, color: "#444" }}>{keys.length} profiles</div>
+      </div>
     </header>
   );
 
