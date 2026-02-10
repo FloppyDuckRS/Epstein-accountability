@@ -1180,71 +1180,65 @@ export default function EpsteinIndex() {
 
   // ═══ GLOBAL SEARCH ENGINE ═══
   const searchResults = useMemo(() => {
-    const q = globalSearch.toLowerCase().trim();
-    if (q.length < 2) return null;
-    const results = { profiles: [], events: [], contradictions: [], consequences: [], money: [], unanswered: [], congress: [], corporate: [], power: [], govfailures: [] };
-    const match = (text) => text && text.toLowerCase().includes(q);
-    // Profiles + their timeline events
-    Object.entries(P).forEach(([id, p]) => {
-      if (match(p.name) || match(p.sum) || match(p.role) || match(p.cat) || match(p.prev)) {
-        results.profiles.push({ id, name: p.name, role: p.role, cat: p.cat, sum: p.sum });
-      }
-      (p.tl || []).forEach(ev => {
-        if (match(ev.title) || match(ev.desc) || match(ev.source)) {
-          results.events.push({ profileId: id, profileName: p.name, date: ev.date, title: ev.title, desc: ev.desc, type: ev.type });
+    try {
+      const q = globalSearch.toLowerCase().trim();
+      if (q.length < 3) return null;
+      const results = { profiles: [], events: [], contradictions: [], consequences: [], money: [], unanswered: [], congress: [], corporate: [], power: [], govfailures: [] };
+      const match = (text) => { try { return text && String(text).toLowerCase().includes(q); } catch(e) { return false; } };
+      const safe = (val) => val == null ? "" : String(val);
+      Object.entries(P).forEach(([id, p]) => {
+        if (match(p.name) || match(p.sum) || match(p.role) || match(p.cat) || match(p.prev)) {
+          results.profiles.push({ id, name: safe(p.name), role: safe(p.role), cat: safe(p.cat) });
+        }
+        (p.tl || []).forEach(ev => {
+          if (match(ev.title) || match(ev.desc) || match(ev.source)) {
+            results.events.push({ profileId: id, profileName: safe(p.name), date: safe(ev.date), title: safe(ev.title), desc: safe(ev.desc) });
+          }
+        });
+      });
+      CONTRADICTIONS.forEach(c => {
+        if (match(c.claim) || match(c.evidence) || match(P[c.profileId]?.name)) {
+          results.contradictions.push({ name: safe(P[c.profileId]?.name || c.person), claim: safe(c.claim), profileId: c.profileId });
         }
       });
-    });
-    // Contradictions
-    CONTRADICTIONS.forEach(c => {
-      if (match(c.claim) || match(c.evidence) || match(P[c.profileId]?.name)) {
-        results.contradictions.push({ ...c, name: P[c.profileId]?.name || c.person });
-      }
-    });
-    // Consequences
-    CONSEQUENCES.forEach(c => {
-      if (match(c.name) || match(c.detail) || match(c.position)) {
-        results.consequences.push(c);
-      }
-    });
-    // Money
-    MONEY_TOTALS.forEach(m => {
-      if (match(m.entity) || match(m.detail) || match(m.amount)) {
-        results.money.push(m);
-      }
-    });
-    // Unanswered
-    UNANSWERED.forEach(u => {
-      if (match(u.question) || match(u.context)) {
-        results.unanswered.push(u);
-      }
-    });
-    // Congressional
-    CONGRESSIONAL.forEach(c => {
-      if (match(c.name) || match(c.action)) {
-        results.congress.push(c);
-      }
-    });
-    // Corporate
-    CORPORATE_ENABLERS.forEach(c => {
-      if (match(c.name) || match(c.detail) || match(c.role) || (c.key_people || []).some(kp => match(kp))) {
-        results.corporate.push(c);
-      }
-    });
-    // Still in Power
-    STILL_IN_POWER.forEach(s => {
-      if (match(P[s.id]?.name) || match(s.position) || match(s.controls)) {
-        results.power.push({ ...s, name: P[s.id]?.name || s.id });
-      }
-    });
-    // Gov Failures
-    GOV_FAILURES.forEach(g => {
-      if (match(g.event) || match(g.detail)) {
-        results.govfailures.push(g);
-      }
-    });
-    const total = Object.values(results).reduce((a, arr) => a + arr.length, 0);
-    return { ...results, total, query: q };
+      CONSEQUENCES.forEach(c => {
+        if (match(c.name) || match(c.detail) || match(c.position)) {
+          results.consequences.push({ name: safe(c.name), detail: safe(c.detail), date: safe(c.date) });
+        }
+      });
+      MONEY_TOTALS.forEach(m => {
+        if (match(m.entity) || match(m.detail) || match(m.amount)) {
+          results.money.push({ entity: safe(m.entity), amount: safe(m.amount), detail: safe(m.detail), person: m.person });
+        }
+      });
+      UNANSWERED.forEach(u => {
+        if (match(u.question) || match(u.context)) {
+          results.unanswered.push({ question: safe(u.question) });
+        }
+      });
+      CONGRESSIONAL.forEach(c => {
+        if (match(c.name) || match(c.action)) {
+          results.congress.push({ name: safe(c.name), action: safe(c.action) });
+        }
+      });
+      CORPORATE_ENABLERS.forEach(c => {
+        if (match(c.name) || match(c.detail) || match(c.role) || (c.key_people || []).some(kp => match(kp))) {
+          results.corporate.push({ name: safe(c.name), settlement: safe(c.settlement) });
+        }
+      });
+      STILL_IN_POWER.forEach(s => {
+        if (match(P[s.id]?.name) || match(s.position) || match(s.controls)) {
+          results.power.push({ id: s.id, name: safe(P[s.id]?.name || s.id), position: safe(s.position), controls: safe(s.controls) });
+        }
+      });
+      GOV_FAILURES.forEach(g => {
+        if (match(g.event) || match(g.detail)) {
+          results.govfailures.push({ date: safe(g.date), event: safe(g.event) });
+        }
+      });
+      const total = Object.values(results).reduce((a, arr) => a + arr.length, 0);
+      return { ...results, total, query: q };
+    } catch(e) { return null; }
   }, [globalSearch]);
 
   const ProfileImg = ({ id, size = 44 }) => {
@@ -1294,7 +1288,7 @@ export default function EpsteinIndex() {
                 autoCorrect="off"
                 autoCapitalize="off"
                 spellCheck="false"
-                style={{ width: "100%", padding: "16px 16px 16px 48px", background: "#111114", border: `2px solid ${globalSearch.length > 1 ? gold : "#1e1e24"}`, borderRadius: 8, color: "#e2e2e8", fontFamily: sans, fontSize: 16, outline: "none", transition: "border-color 0.2s" }}
+                style={{ width: "100%", padding: "16px 16px 16px 48px", background: "#111114", border: `2px solid ${globalSearch.length > 2 ? gold : "#1e1e24"}`, borderRadius: 8, color: "#e2e2e8", fontFamily: sans, fontSize: 16, outline: "none", transition: "border-color 0.2s" }}
               />
               {globalSearch && <button onClick={() => setGlobalSearch("")} style={{ position: "absolute", right: 14, top: "50%", transform: "translateY(-50%)", background: "none", border: "none", color: "#666", cursor: "pointer", fontSize: 18, fontFamily: sans }}>✕</button>}
             </div>
@@ -1306,7 +1300,6 @@ export default function EpsteinIndex() {
                   <span style={{ fontFamily: sans, fontSize: 13, color: gold, fontWeight: 700 }}>{searchResults.total} results for "{searchResults.query}"</span>
                 </div>
 
-                {/* Profile matches */}
                 {searchResults.profiles.length > 0 && (
                   <div style={{ padding: "8px 16px" }}>
                     <div style={{ fontSize: 9, fontWeight: 700, color: "#f59e0b", letterSpacing: "0.15em", textTransform: "uppercase", marginBottom: 6, fontFamily: sans }}>👤 Profiles ({searchResults.profiles.length})</div>
@@ -1322,59 +1315,54 @@ export default function EpsteinIndex() {
                   </div>
                 )}
 
-                {/* Timeline event matches */}
                 {searchResults.events.length > 0 && (
                   <div style={{ padding: "8px 16px", borderTop: "1px solid #1e1e24" }}>
                     <div style={{ fontSize: 9, fontWeight: 700, color: "#3b82f6", letterSpacing: "0.15em", textTransform: "uppercase", marginBottom: 6, fontFamily: sans }}>📅 Timeline Events ({searchResults.events.length})</div>
                     {searchResults.events.slice(0, 10).map((r, i) => (
                       <button key={i} onClick={() => go(r.profileId)} style={{ display: "block", width: "100%", padding: "6px 4px", background: "none", border: "none", borderBottom: "1px solid #0e0e12", cursor: "pointer", textAlign: "left" }}>
                         <div style={{ fontSize: 12, fontWeight: 600, color: "#ddd", fontFamily: sans }}>{r.title} <span style={{ fontSize: 10, color: "#666" }}>— {r.profileName}, {r.date}</span></div>
-                        <div style={{ fontSize: 11, color: "#777", fontFamily: sans, lineHeight: 1.4, marginTop: 2 }}>{r.desc.length > 120 ? r.desc.slice(0, 120) + "..." : r.desc}</div>
+                        <div style={{ fontSize: 11, color: "#777", fontFamily: sans, lineHeight: 1.4, marginTop: 2 }}>{(r.desc || "").slice(0, 120)}{(r.desc || "").length > 120 ? "..." : ""}</div>
                       </button>
                     ))}
                   </div>
                 )}
 
-                {/* Contradiction matches */}
                 {searchResults.contradictions.length > 0 && (
                   <div style={{ padding: "8px 16px", borderTop: "1px solid #1e1e24" }}>
                     <div style={{ fontSize: 9, fontWeight: 700, color: "#ef4444", letterSpacing: "0.15em", textTransform: "uppercase", marginBottom: 6, fontFamily: sans }}>🔄 Contradictions ({searchResults.contradictions.length})</div>
                     {searchResults.contradictions.slice(0, 5).map((r, i) => (
                       <button key={i} onClick={() => { setPage("contradictions"); setGlobalSearch(""); }} style={{ display: "block", width: "100%", padding: "6px 4px", background: "none", border: "none", borderBottom: "1px solid #0e0e12", cursor: "pointer", textAlign: "left" }}>
                         <div style={{ fontSize: 12, fontWeight: 600, color: "#ddd", fontFamily: sans }}>{r.name}</div>
-                        <div style={{ fontSize: 11, color: "#ef4444", fontFamily: sans }}>Claimed: {r.claim.length > 80 ? r.claim.slice(0, 80) + "..." : r.claim}</div>
+                        <div style={{ fontSize: 11, color: "#ef4444", fontFamily: sans }}>Claimed: {(r.claim || "").slice(0, 80)}{(r.claim || "").length > 80 ? "..." : ""}</div>
                       </button>
                     ))}
                   </div>
                 )}
 
-                {/* Money matches */}
                 {searchResults.money.length > 0 && (
                   <div style={{ padding: "8px 16px", borderTop: "1px solid #1e1e24" }}>
                     <div style={{ fontSize: 9, fontWeight: 700, color: "#22c55e", letterSpacing: "0.15em", textTransform: "uppercase", marginBottom: 6, fontFamily: sans }}>💰 Money Trail ({searchResults.money.length})</div>
                     {searchResults.money.slice(0, 5).map((r, i) => (
                       <button key={i} onClick={() => { setPage("money"); setGlobalSearch(""); }} style={{ display: "block", width: "100%", padding: "6px 4px", background: "none", border: "none", borderBottom: "1px solid #0e0e12", cursor: "pointer", textAlign: "left" }}>
                         <div style={{ fontSize: 12, fontWeight: 600, color: "#ddd", fontFamily: sans }}>{r.entity} — <span style={{ color: "#22c55e" }}>{r.amount}</span></div>
-                        <div style={{ fontSize: 11, color: "#777", fontFamily: sans }}>{r.detail.length > 100 ? r.detail.slice(0, 100) + "..." : r.detail}</div>
+                        <div style={{ fontSize: 11, color: "#777", fontFamily: sans }}>{(r.detail || "").slice(0, 100)}{(r.detail || "").length > 100 ? "..." : ""}</div>
                       </button>
                     ))}
                   </div>
                 )}
 
-                {/* Consequences matches */}
                 {searchResults.consequences.length > 0 && (
                   <div style={{ padding: "8px 16px", borderTop: "1px solid #1e1e24" }}>
                     <div style={{ fontSize: 9, fontWeight: 700, color: "#a855f7", letterSpacing: "0.15em", textTransform: "uppercase", marginBottom: 6, fontFamily: sans }}>📉 Consequences ({searchResults.consequences.length})</div>
                     {searchResults.consequences.slice(0, 5).map((r, i) => (
                       <button key={i} onClick={() => { setPage("consequences"); setGlobalSearch(""); }} style={{ display: "block", width: "100%", padding: "6px 4px", background: "none", border: "none", borderBottom: "1px solid #0e0e12", cursor: "pointer", textAlign: "left" }}>
                         <div style={{ fontSize: 12, fontWeight: 600, color: "#ddd", fontFamily: sans }}>{r.name} <span style={{ fontSize: 10, color: "#666" }}>— {r.date}</span></div>
-                        <div style={{ fontSize: 11, color: "#777", fontFamily: sans }}>{r.detail.length > 100 ? r.detail.slice(0, 100) + "..." : r.detail}</div>
+                        <div style={{ fontSize: 11, color: "#777", fontFamily: sans }}>{(r.detail || "").slice(0, 100)}{(r.detail || "").length > 100 ? "..." : ""}</div>
                       </button>
                     ))}
                   </div>
                 )}
 
-                {/* Corporate matches */}
                 {searchResults.corporate.length > 0 && (
                   <div style={{ padding: "8px 16px", borderTop: "1px solid #1e1e24" }}>
                     <div style={{ fontSize: 9, fontWeight: 700, color: "#f59e0b", letterSpacing: "0.15em", textTransform: "uppercase", marginBottom: 6, fontFamily: sans }}>🏢 Corporate ({searchResults.corporate.length})</div>
@@ -1386,7 +1374,6 @@ export default function EpsteinIndex() {
                   </div>
                 )}
 
-                {/* Gov Failures matches */}
                 {searchResults.govfailures.length > 0 && (
                   <div style={{ padding: "8px 16px", borderTop: "1px solid #1e1e24" }}>
                     <div style={{ fontSize: 9, fontWeight: 700, color: "#6b7280", letterSpacing: "0.15em", textTransform: "uppercase", marginBottom: 6, fontFamily: sans }}>⚖️ Gov Failures ({searchResults.govfailures.length})</div>
@@ -1398,7 +1385,6 @@ export default function EpsteinIndex() {
                   </div>
                 )}
 
-                {/* Unanswered matches */}
                 {searchResults.unanswered.length > 0 && (
                   <div style={{ padding: "8px 16px", borderTop: "1px solid #1e1e24" }}>
                     <div style={{ fontSize: 9, fontWeight: 700, color: "#ec4899", letterSpacing: "0.15em", textTransform: "uppercase", marginBottom: 6, fontFamily: sans }}>❓ Unanswered ({searchResults.unanswered.length})</div>
@@ -1410,20 +1396,18 @@ export default function EpsteinIndex() {
                   </div>
                 )}
 
-                {/* Congress matches */}
                 {searchResults.congress.length > 0 && (
                   <div style={{ padding: "8px 16px", borderTop: "1px solid #1e1e24" }}>
                     <div style={{ fontSize: 9, fontWeight: 700, color: "#6b9eff", letterSpacing: "0.15em", textTransform: "uppercase", marginBottom: 6, fontFamily: sans }}>🏛 Congress ({searchResults.congress.length})</div>
                     {searchResults.congress.slice(0, 5).map((r, i) => (
                       <button key={i} onClick={() => { setPage("congress"); setGlobalSearch(""); }} style={{ display: "block", width: "100%", padding: "6px 4px", background: "none", border: "none", borderBottom: "1px solid #0e0e12", cursor: "pointer", textAlign: "left" }}>
                         <div style={{ fontSize: 12, fontWeight: 600, color: "#ddd", fontFamily: sans }}>{r.name}</div>
-                        <div style={{ fontSize: 11, color: "#777", fontFamily: sans }}>{r.action.length > 100 ? r.action.slice(0, 100) + "..." : r.action}</div>
+                        <div style={{ fontSize: 11, color: "#777", fontFamily: sans }}>{(r.action || "").slice(0, 100)}{(r.action || "").length > 100 ? "..." : ""}</div>
                       </button>
                     ))}
                   </div>
                 )}
 
-                {/* Still in Power matches */}
                 {searchResults.power.length > 0 && (
                   <div style={{ padding: "8px 16px", borderTop: "1px solid #1e1e24" }}>
                     <div style={{ fontSize: 9, fontWeight: 700, color: "#ef4444", letterSpacing: "0.15em", textTransform: "uppercase", marginBottom: 6, fontFamily: sans }}>👔 Still in Power ({searchResults.power.length})</div>
