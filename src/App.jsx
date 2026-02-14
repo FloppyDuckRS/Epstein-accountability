@@ -825,7 +825,7 @@ const CO_CONSPIRATORS = {
     { name: "Sarah Kellen", status: "Named co-conspirator 2007 — immunity via plea deal", detail: "Epstein's primary scheduler. Organized victims' visits, maintained contact lists. Victims testified Kellen recruited and scheduled them. Protected by 2008 plea deal. Never charged despite deal being voided. Now goes by Sarah Kensington." },
     { name: "Lesley Groff", status: "FBI co-conspirator 2019 — never notified, never charged", detail: "Epstein's executive assistant for 20+ years. Listed on FBI's Aug 2019 co-conspirator document. Attorney states she cooperated fully, answered every question, and was told she would not be prosecuted — yet was never informed she was designated a co-conspirator until name unredacted Feb 2026.", profileId: "lesley-groff" },
     { name: "Adriana Ross", status: "Named co-conspirator 2007 — immunity via plea deal", detail: "Also known as Adriana Mucinska. Named in FBI investigation as facilitator. Invoked Fifth Amendment in deposition. Protected under plea deal." },
-    { name: "Nadia Marcinkova", status: "Named co-conspirator 2007 — immunity via plea deal", detail: "Alleged victim who became participant. Epstein reportedly 'purchased' her from her family in Yugoslavia as a teenager. Later became a pilot. Now goes by Nadia Marcinko. Never charged despite plea deal being voided." },
+    { name: "Nadia Marcinkova", status: "Named co-conspirator 2007 — immunity via plea deal", detail: "Alleged victim who became participant. Born in Košice, Slovakia (not Yugoslavia as widely misreported). Her father, architect Peter Marcinko, lives in Prešov and has denied claims she was 'purchased.' Epstein brought her to the US as a teenager. Later became a pilot. Now goes by Nadia Marcinko. Never charged despite plea deal being voided." },
   ],
   unknown: 3,
   source: "FBI emails July 2019, DOJ Files Dec 2025-Feb 2026, Maxwell trial testimony, Khanna House floor speech Feb 10, 2026",
@@ -1043,6 +1043,7 @@ const CORRECTIONS_LOG = [
   { date: "Feb 13, 2026", entry: "Peter Mandelson summoned to testify before House Oversight Committee. Garcia and Subramanyam sent formal letter. Deadline Feb 27. Under Met Police investigation. Added consequence entry." },
   { date: "Feb 13, 2026", entry: "Goldman Sachs top lawyer Kathy Ruemmler announced resignation (effective June 30) after Epstein files revealed luxury gifts, 'Uncle Jeffrey' emails, client referrals. Added consequence entry." },
   { date: "Feb 13, 2026", entry: "European fallout article noted: Mandelson under Met Police investigation, Norwegian Crown Princess Mette-Marit borrowed Epstein property, Lajcak resigned. Swifter accountability in Europe than US." },
+  { date: "Feb 13, 2026", entry: "CORRECTION: Nadia Marcinkova origin fixed from 'Yugoslavia' to Slovakia (born Košice, lived Prešov). Yugoslavia was never part of Slovakia. Father Peter Marcinko denied 'purchased' claims. Per Wikipedia, Slovak press (Korzár Prešov)." },
 ];
 
 
