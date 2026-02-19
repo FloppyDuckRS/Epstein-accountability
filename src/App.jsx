@@ -273,23 +273,32 @@ const P = {
     ]
   },
   "andrew-mw": {
-    name: "Andrew Mountbatten-Windsor", cat: "Royalty", role: "Stripped of all royal titles", prev: "Duke of York, Prince", init: "AM",
-    sum: "Hundreds of mentions. Compromising photos released showing him over an unidentified person. Accused by Virginia Giuffre. Email as 'The Invisible Man' asking Maxwell for 'new inappropriate friends.' Stripped of titles by King Charles. Ignoring House Oversight request.",
-    resp: "Has repeatedly denied all allegations. Has not responded to House Oversight interview request. PM Starmer said he should cooperate.",
-    respDate: "Ongoing",
+    name: "Andrew Mountbatten-Windsor", cat: "Royalty", role: "🚨 ARRESTED — Feb 19, 2026 — Misconduct in Public Office", prev: "Duke of York, Prince Andrew", init: "AM",
+    sum: "🚨 ARRESTED Feb 19, 2026 — first royal arrest in centuries. Hundreds of mentions in files. Compromising photos released. Accused by Virginia Giuffre of trafficking when she was 17. Email as 'The Invisible Man' asking Maxwell for 'new inappropriate friends.' Stripped of all titles. Maxwell's 2015 email confirmed the Giuffre photo is real — directly contradicting years of denials. Thames Valley Police arrested on suspicion of misconduct in public office (max sentence: life imprisonment) for allegedly passing confidential UK government information to Epstein while serving as taxpayer-funded Trade Envoy. King Charles III: 'The law must take its course.' Giuffre's family: 'No one is above the law, not even royalty.'",
+    resp: "Has repeatedly denied all allegations. BBC Newsnight 2019: 'I have no recollection of ever meeting this woman.' Claimed couldn't sweat. No empathy shown. Civil lawsuit settled ~$12M without admission of guilt.",
+    respDate: "Feb 19, 2026 — Arrested",
     tax: [
       { type: "UK Royal Allowance", detail: "Previously received Sovereign Grant funds (UK public money)", source: "UK Crown records", status: "Stripped/revoked", amount: "Revoked", verified: true },
+      { type: "UK Trade Envoy Role", detail: "Taxpayer-funded position as UK Special Representative for International Trade and Investment (2001–2011) — the role at the center of the misconduct in public office charge", source: "UK Parliament records", status: "Resigned under pressure 2011", amount: "Govt-funded", verified: true },
     ],
-    conn: ["bill-clinton", "bill-gates", "sarah-ferguson"],
+    conn: ["bill-clinton", "bill-gates", "sarah-ferguson", "peter-mandelson"],
     tl: [
-      { date: "2000s", year: 2000, title: "Friendship Established", desc: "Developed close friendship, visiting properties in NY, Palm Beach, and USVI.", source: "Court filings, media", url: "", type: "contact", confidence: "corroborated" },
+      { date: "2000s", year: 2000, title: "Friendship Established", desc: "Developed close friendship with Epstein, visiting properties in NY, Palm Beach, and USVI.", source: "Court filings, media", url: "", type: "contact", confidence: "corroborated" },
       { date: "Aug 2001", year: 2001, title: "Email as 'The Invisible Man'", desc: "Emailed Maxwell from 'Balmoral Summer Camp for the Royal Family' asking: 'Have you found me some new inappropriate friends?' Referenced leaving the Royal Navy and caring for 'the Girls' (his daughters).", source: "DOJ Files, PBS/Fortune", url: "https://fortune.com/2025/12/23/trump-epstein-files-distraction-flight-logs-unfounded-and-false-claims/", type: "document", confidence: "primary" },
-      { date: "Post-2008", year: 2009, title: "Continued After Conviction", desc: "Maintained friendship and visited Epstein in New York after prison release.", source: "Court documents", url: "", type: "contact", confidence: "corroborated" },
+      { date: "2001", year: 2001, title: "Photo with Virginia Giuffre (age 17)", desc: "Photo taken at Maxwell's London townhouse showing Andrew with Virginia Roberts Giuffre, then 17, and Ghislaine Maxwell. Andrew and Maxwell both denied the photo's authenticity for years.", source: "DOJ Files; Maxwell 2015 email (released 2026); CBS News", url: "https://www.cbsnews.com/news/former-prince-andrew-arrested-epstein-files-suspected-misconduct-public-office/", type: "document", confidence: "primary" },
+      { date: "2001–2011", year: 2001, title: "UK Trade Envoy — Taxpayer-Funded Role", desc: "Served as UK Special Representative for International Trade and Investment while maintaining documented Epstein ties. This role is at the center of the current misconduct in public office arrest.", source: "UK Parliament records", url: "", type: "government", confidence: "primary" },
+      { date: "Post-2008", year: 2009, title: "Continued After Conviction", desc: "Maintained friendship and visited Epstein in New York after Epstein's 2008 sex offender conviction.", source: "Court documents", url: "", type: "contact", confidence: "corroborated" },
+      { date: "2010", year: 2010, title: "Central Park Walk — Led to Trade Envoy Resignation", desc: "Photographed walking publicly with convicted sex offender Epstein in Central Park, two years after Epstein's conviction. Led to resignation as UK Trade Envoy.", source: "Multiple press reports with photo evidence, 2010", url: "", type: "contact", confidence: "primary" },
       { date: "2010", year: 2010, title: "Epstein Set Up Date", desc: "Epstein wrote: 'I have a friend who I think you might enjoy having dinner with.'", source: "DOJ Files, PBS", url: "https://www.pbs.org/newshour/nation/the-latest-epstein-files-release-includes-famous-names-and-new-details-about-an-earlier-investigation", type: "contact", confidence: "primary" },
-      { date: "2015", year: 2015, title: "Giuffre Accusations", desc: "Virginia Giuffre alleged Epstein instructed her to have sex with Andrew when she was 17.", source: "Maxwell civil case", url: "", type: "allegation", confidence: "primary" },
-      { date: "Jan 30, 2026", year: 2026, title: "Compromising Photos Released", desc: "DOJ released photos showing Andrew on all fours over unidentified person. Buckingham Palace dinner invitation for Epstein also released.", source: "DOJ Files, CBS", url: "https://www.cbsnews.com/news/bill-gates-elon-musk-epstein-files-what-documents-show/", type: "document", confidence: "primary" },
-      { date: "Oct 2025", year: 2025, title: "Stripped of All Royal Titles", desc: "King Charles stripped all titles including right to be called prince.", source: "UK media", url: "", type: "consequence", confidence: "corroborated" },
-      { date: "Feb 2026", year: 2026, title: "PM Calls for Cooperation", desc: "PM Starmer: Andrew should 'tell US investigators what he knows.' Has not responded to House Oversight interview request.", source: "BBC, PBS", url: "https://www.pbs.org/newshour/nation/a-list-of-powerful-men-named-in-the-epstein-files-from-elon-musk-to-former-prince-andrew", type: "government", confidence: "primary" },
+      { date: "2015", year: 2015, title: "Giuffre Accusations in Civil Case", desc: "Virginia Giuffre alleged Epstein instructed her to have sex with Andrew when she was 17 years old in London, New York, and the USVI.", source: "Maxwell civil case", url: "", type: "allegation", confidence: "primary" },
+      { date: "Nov 16, 2019", year: 2019, title: "Disastrous BBC Newsnight Interview", desc: "Denied remembering Giuffre, claimed he couldn't sweat due to a medical condition, showed no empathy for victims. Widely seen as one of the worst PR moments in royal history. Led to stepping back from public duties.", source: "BBC Newsnight, Nov 16, 2019", url: "", type: "claim", confidence: "primary" },
+      { date: "Feb 2022", year: 2022, title: "Civil Lawsuit Settled — ~$12 Million", desc: "Settled Giuffre's civil lawsuit for a reported ~$12M without admitting guilt. Days later, stripped of military titles and royal patronages by Buckingham Palace.", source: "Court records; Reuters; BBC, Feb 2022", url: "", type: "consequence", confidence: "primary" },
+      { date: "Jan 30, 2026", year: 2026, title: "Compromising Photos Released by DOJ", desc: "DOJ released photos showing Andrew in compromising position over unidentified person. Buckingham Palace dinner invitation for Epstein also released.", source: "DOJ Files, CBS", url: "https://www.cbsnews.com/news/bill-gates-elon-musk-epstein-files-what-documents-show/", type: "document", confidence: "primary" },
+      { date: "Jan–Feb 2026", year: 2026, title: "Maxwell 2015 Email Confirms Giuffre Photo Is Real", desc: "DOJ file release includes 2015 draft email from 'G Maxwell' to Epstein: 'In 2001 I was in London when [name redacted] met a number of friends of mine including Prince Andrew. A photograph was taken as I imagine she wanted to show it to friends and family.' Directly contradicts years of denials from both Andrew and Maxwell.", source: "DOJ Epstein Files 2026 release; CBS News, Feb 19, 2026", url: "https://www.cbsnews.com/news/former-prince-andrew-arrested-epstein-files-suspected-misconduct-public-office/", type: "document", confidence: "primary" },
+      { date: "Oct 2025", year: 2025, title: "Stripped of All Remaining Royal Titles", desc: "King Charles stripped all remaining titles including the right to be called prince. Forced to vacate Royal Lodge on Windsor Estate. Now formally known only as 'Andrew Mountbatten-Windsor.'", source: "BBC; Guardian, 2025", url: "", type: "consequence", confidence: "corroborated" },
+      { date: "Feb 2026", year: 2026, title: "Republic UK Files Police Complaint", desc: "Anti-monarchy organization Republic UK files complaint with Thames Valley Police alleging Andrew passed confidential government information to Epstein while serving as Trade Envoy — potential misconduct in public office.", source: "Republic UK statement; BBC, Feb 2026", url: "", type: "government", confidence: "primary" },
+      { date: "Feb 11, 2026", year: 2026, title: "Thames Valley Police Opens Formal Assessment", desc: "Police confirm they are formally assessing claims against Andrew Mountbatten-Windsor. Statement: 'We understand the significant public interest in this case.'", source: "Thames Valley Police statement, Feb 11, 2026", url: "", type: "government", confidence: "primary" },
+      { date: "Feb 19, 2026", year: 2026, title: "🚨 ARRESTED — On His 66th Birthday", desc: "Thames Valley Police arrested Andrew Mountbatten-Windsor at his Norfolk residence on suspicion of misconduct in public office. Maximum sentence in the UK: life imprisonment. First arrest of a British royal family member in centuries. King Charles III: 'The law must take its course.' Virginia Giuffre's siblings: 'No one is above the law, not even royalty. For survivors everywhere, Virginia did this for you.'", source: "Thames Valley Police statement; NBC News; CBS News, Feb 19, 2026", url: "https://www.nbcnews.com/world/united-kingdom/former-prince-andrew-arrested-epstein-files-revelations-rcna259691", type: "consequence", confidence: "primary" },
     ]
   },
   "peter-thiel": {
@@ -885,9 +894,10 @@ const GOV_FAILURES = [
 // GLOBAL CONSEQUENCES TRACKER
 // ═══════════════════════════════════════════════════════
 const CONSEQUENCES = [
+  { name: "Andrew Mountbatten-Windsor", role: "Former Prince Andrew — UK Royal / Former Trade Envoy", action: "🚨 ARRESTED Feb 19, 2026 — first royal arrest in centuries. Thames Valley Police arrested on his 66th birthday on suspicion of misconduct in public office. Charge stems from allegedly sharing confidential UK government information with Epstein while serving as taxpayer-funded Trade Envoy. Max sentence: life imprisonment. King Charles III: 'The law must take its course.' Virginia Giuffre's siblings: 'No one is above the law, not even royalty. For survivors everywhere, Virginia did this for you.' Maxwell 2015 email in files confirmed the Giuffre photo is authentic — contradicting years of denials.", date: "Feb 19, 2026", profileId: "andrew-mw", type: "arrested" },
   { name: "Peter Mandelson", role: "UK — House of Lords / Labour", action: "Resigned from Labour and House of Lords within 48 hours of file release showing 20+ contacts with Epstein including island visit. Met Police opened criminal investigation. Mandelson had claimed 'only met Epstein briefly.'", date: "Feb 1-3, 2026", profileId: "peter-mandelson", type: "resignation" },
   { name: "Larry Summers", role: "OpenAI Board / Harvard", action: "Left OpenAI board, stopped teaching at Harvard. Called it 'major error of judgment.' Files showed multiple flights on Epstein's jet and dinners after 2008 conviction. Had previously claimed relationship was limited.", date: "Post-release", profileId: "larry-summers", type: "resignation" },
-  { name: "Andrew Mountbatten-Windsor", role: "UK Royalty / Duke of York", action: "Stripped of all royal titles and military affiliations by King Charles. PM Starmer publicly stated Andrew should cooperate with investigators. Civil lawsuit settled for reported £12M to Virginia Giuffre. Royal Lodge residence reportedly being transferred.", date: "Oct 2025", profileId: "andrew-mw", type: "stripped" },
+
   { name: "Alexander Acosta", role: "U.S. Secretary of Labor", action: "Forced to resign in July 2019 after Julie K. Brown's reporting exposed the full scope of the 2008 plea deal he negotiated. Trump initially defended him but accepted resignation after bipartisan criticism. The deal Acosta signed gave immunity to unnamed co-conspirators.", date: "Jul 2019", profileId: "alexander-acosta", type: "resignation" },
   { name: "Leon Black", role: "CEO, Apollo Global Management", action: "Stepped down as Apollo CEO after investigation confirmed $158M in payments to Epstein (2012-2017) for 'financial advice.' Independent review found payments were 'not illegal' but Black resigned citing 'distraction.' Apollo later settled with USVI for $62.5M.", date: "Mar 2021", profileId: "leon-black", type: "resignation" },
   { name: "Jes Staley", role: "Barclays CEO / Former JPMorgan Private Banking Head", action: "Resigned from Barclays in 2021 when FCA investigation launched. UK FCA subsequently banned him from financial services and fined £1.8M. 2025 tribunal revealed 1,200+ emails with Epstein and that he slept with an Epstein assistant. JPMorgan paid $365M in settlements partly due to Staley's role as Epstein's primary banking contact.", date: "2021-2025", profileId: "jes-staley", type: "banned" },
@@ -1053,6 +1063,9 @@ const CORRECTIONS_LOG = [
   { date: "Feb 13, 2026", entry: "Goldman Sachs top lawyer Kathy Ruemmler announced resignation (effective June 30) after Epstein files revealed luxury gifts, 'Uncle Jeffrey' emails, client referrals. Added consequence entry." },
   { date: "Feb 13, 2026", entry: "European fallout article noted: Mandelson under Met Police investigation, Norwegian Crown Princess Mette-Marit borrowed Epstein property, Lajcak resigned. Swifter accountability in Europe than US." },
   { date: "Feb 13, 2026", entry: "CORRECTION: Nadia Marcinkova origin fixed from 'Yugoslavia' to Slovakia (born Košice, lived Prešov). Yugoslavia was never part of Slovakia. Father Peter Marcinko denied 'purchased' claims. Per Wikipedia, Slovak press (Korzár Prešov)." },
+  { date: "Feb 19, 2026", entry: "🚨 BREAKING — Andrew Mountbatten-Windsor ARRESTED on his 66th birthday. Thames Valley Police: suspicion of misconduct in public office. First royal arrest in centuries. Max sentence: life imprisonment. King Charles: 'The law must take its course.' Giuffre family: 'No one is above the law, not even royalty.' Andrew profile updated with full arrest timeline. Moved from 'stripped' to 'arrested' in CONSEQUENCES. ACCOUNTABILITY_SCORE updated." },
+  { date: "Feb 19, 2026", entry: "Maxwell 2015 email in DOJ files confirmed Giuffre photo is authentic — 'In 2001 I was in London when [name redacted] met a number of friends of mine including Prince Andrew. A photograph was taken.' Directly contradicts years of denials. Added to Andrew timeline." },
+  { date: "Feb 19, 2026", entry: "Virginia Giuffre's siblings statement: 'At last, today, our broken hearts have been lifted at the news that no one is above the law, not even royalty. On behalf of our sister Virginia Roberts Giuffre, we extend our gratitude to the UK's Thames Valley Police. He was never a prince. For survivors everywhere, Virginia did this for you.'" },
   { date: "Feb 15, 2026", entry: "Bondi Feb 14 letter to Congress: Claims 'all' files released. Lists 300+ 'politically exposed persons.' Still withholding ~200K pages on privilege grounds Congress rejected. Added to gov failures, contradictions, consequences, unanswered questions." },
   { date: "Feb 15, 2026", entry: "Casey Wasserman: Updated profile with agency sale (Feb 14), Chappell Roan/Abby Wambach departures, John Summit threat. Added 2 timeline events. Added consequence entry." },
   { date: "Feb 15, 2026", entry: "Kathryn Ruemmler: Major profile update — added 2019 post-arrest call, luxury gifts, 'Uncle Jeffrey' emails, Bank Rothschild referral, resignation timeline event. Updated summary and role." },
@@ -1081,9 +1094,10 @@ const VICTIM_STATS = {
 const ACCOUNTABILITY_SCORE = {
   namedInFiles: 67,
   facedQuestions: 12,
-  facedLegalConsequences: 4,
+  facedLegalConsequences: 5,
   currentlyProsecuted: 1,
   servedTime: 2,
+  arrested: 1,
   stillInPower: 18,
   govPositions: 8,
   billionaires: 11,
@@ -1091,7 +1105,8 @@ const ACCOUNTABILITY_SCORE = {
   deathsBeforeTrial: 2,
   categories: [
     { label: "Named in Files", count: 67, color: "#3b82f6" },
-    { label: "Faced Any Legal Consequence", count: 4, color: "#f59e0b" },
+    { label: "Faced Any Legal Consequence", count: 5, color: "#f59e0b" },
+    { label: "Arrested", count: 1, color: "#ff4444" },
     { label: "Currently Serving Time", count: 1, color: "#ef4444" },
     { label: "Deaths Before Trial", count: 2, color: "#666" },
   ]
@@ -1291,6 +1306,7 @@ export default function EpsteinIndex() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [globalSearch, setGlobalSearch] = useState("");
   const [searchQuery, setSearchQuery] = useState("");
+  const [breakingDismissed, setBreakingDismissed] = useState(false);
   const searchTimer = useRef(null);
   const handleSearch = useCallback((e) => {
     const val = e.target.value;
@@ -1424,6 +1440,53 @@ export default function EpsteinIndex() {
     return (
       <div style={{ minHeight: "100vh", background: "#0a0a0c", color: "#e2e2e8", fontFamily: serif }}>
         <style>{CSS}</style>
+
+        {/* ═══ BREAKING NEWS BANNER ═══ */}
+        {!breakingDismissed && (
+          <div style={{
+            background: "linear-gradient(135deg, #7a0000, #cc0000)",
+            color: "#fff",
+            padding: "12px 20px",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "space-between",
+            gap: 12,
+            borderBottom: "3px solid #ff4444",
+            position: "sticky",
+            top: 0,
+            zIndex: 1000,
+            flexWrap: "wrap"
+          }}>
+            <div style={{ display: "flex", alignItems: "center", gap: 10, flexWrap: "wrap" }}>
+              <span style={{
+                background: "#fff",
+                color: "#8B0000",
+                fontSize: 10,
+                fontWeight: 800,
+                padding: "3px 8px",
+                borderRadius: 3,
+                letterSpacing: 1.5,
+                flexShrink: 0,
+                fontFamily: mono
+              }}>BREAKING</span>
+              <span style={{ fontWeight: 700, fontSize: 14, fontFamily: sans }}>
+                Prince Andrew Arrested — Misconduct in Public Office
+              </span>
+              <span style={{ fontSize: 12, opacity: 0.9, fontFamily: sans }}>
+                First royal arrest in centuries · Feb 19, 2026 · "No one is above the law, not even royalty."
+              </span>
+              <button
+                onClick={() => { setPage("consequences"); }}
+                style={{ background: "rgba(255,255,255,0.2)", border: "1px solid rgba(255,255,255,0.5)", color: "#fff", borderRadius: 4, padding: "3px 10px", cursor: "pointer", fontSize: 11, fontFamily: sans }}
+              >See Details →</button>
+            </div>
+            <button
+              onClick={() => setBreakingDismissed(true)}
+              style={{ background: "transparent", border: "1px solid rgba(255,255,255,0.3)", color: "#fff", borderRadius: 4, padding: "3px 10px", cursor: "pointer", fontSize: 11, flexShrink: 0, fontFamily: sans }}
+            >✕</button>
+          </div>
+        )}
+
         <div style={{ maxWidth: 900, margin: "0 auto", padding: "60px 24px" }}>
           <div style={{ fontFamily: sans, fontSize: 11, letterSpacing: "0.25em", color: gold, textTransform: "uppercase", marginBottom: 16 }}>A Public Accountability Project</div>
           <h1 style={{ fontSize: "clamp(36px, 6vw, 64px)", fontWeight: 900, lineHeight: 1.05, marginBottom: 24, letterSpacing: "-0.02em" }}>The Epstein<br />Index</h1>
@@ -1431,7 +1494,7 @@ export default function EpsteinIndex() {
           <p style={{ fontSize: 14, lineHeight: 1.7, color: "#777", maxWidth: 620, marginBottom: 20, fontFamily: sans }}>Being named in these files does not imply criminal conduct. But when individuals who maintained documented relationships with a convicted sex offender currently control billions in public money, taxpayers have the right to know. That is accountability.</p>
           <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 40, fontFamily: mono, flexWrap: "wrap" }}>
             <span style={{ fontSize: 11, color: "#555" }}>Last updated:</span>
-            <span style={{ fontSize: 11, color: gold, fontWeight: 700 }}>Feb 15, 2026 · 9:00 PM ET</span>
+            <span style={{ fontSize: 11, color: gold, fontWeight: 700 }}>Feb 19, 2026 · Breaking</span>
             <span style={{ fontSize: 11, color: "#444" }}>·</span>
             <span style={{ fontSize: 11, color: "#555" }}>{Object.keys(P).length} profiles tracked</span>
             <span style={{ fontSize: 11, color: "#444" }}>·</span>
@@ -2050,13 +2113,14 @@ export default function EpsteinIndex() {
 
           <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
             {CONSEQUENCES.map((c, i) => (
-              <div key={i} style={{ padding: 14, background: "#111114", border: "1px solid #1e1e24", borderRadius: 6, borderLeft: `3px solid ${c.action.includes("Criminal") || c.action.includes("investigation") ? "#ef4444" : "#22c55e"}` }}>
+              <div key={i} style={{ padding: 14, background: c.type === "arrested" ? "rgba(255,34,34,0.08)" : "#111114", border: c.type === "arrested" ? "1px solid #ff4444" : "1px solid #1e1e24", borderRadius: 6, borderLeft: `3px solid ${c.type === "arrested" ? "#ff2222" : c.action.includes("Criminal") || c.action.includes("investigation") ? "#ef4444" : "#22c55e"}` }}>
                 <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start" }}>
                   <div>
                     <div style={{ fontSize: 14, fontWeight: 700, marginBottom: 2 }}>{c.name}</div>
                     <div style={{ fontSize: 11, color: "#888", marginBottom: 6 }}>{c.role}</div>
                   </div>
                   <div style={{ display: "flex", gap: 6, alignItems: "center" }}>
+                    {c.type === "arrested" && <span style={{ fontSize: 9, fontFamily: mono, color: "#ff4444", fontWeight: 700, background: "rgba(255,0,0,0.1)", padding: "2px 6px", borderRadius: 3 }}>ARRESTED</span>}
                     <span style={{ fontSize: 9, fontFamily: mono, color: "#666" }}>{c.date}</span>
                     {c.profileId && <button onClick={() => go(c.profileId)} style={{ fontSize: 9, color: gold, background: "none", border: `1px solid ${gold}`, borderRadius: 3, padding: "1px 6px", cursor: "pointer" }}>Profile →</button>}
                   </div>
@@ -2072,6 +2136,10 @@ export default function EpsteinIndex() {
               <div style={{ textAlign: "center" }}>
                 <div style={{ fontSize: 20, fontWeight: 900, color: "#22c55e", fontFamily: serif }}>{CONSEQUENCES.length}</div>
                 <div style={{ fontSize: 10, color: "#888" }}>Total Actions</div>
+              </div>
+              <div style={{ textAlign: "center" }}>
+                <div style={{ fontSize: 20, fontWeight: 900, color: "#ff4444", fontFamily: serif }}>{CONSEQUENCES.filter(c => c.type === "arrested").length}</div>
+                <div style={{ fontSize: 10, color: "#888" }}>Arrested</div>
               </div>
               <div style={{ textAlign: "center" }}>
                 <div style={{ fontSize: 20, fontWeight: 900, color: "#3b82f6", fontFamily: serif }}>{CONSEQUENCES.filter(c => c.type === "resignation").length}</div>
@@ -2095,9 +2163,9 @@ export default function EpsteinIndex() {
               </div>
             </div>
           </div>
-          <div style={{ marginTop: 16, padding: 14, background: "rgba(239,68,68,0.05)", border: "1px solid rgba(239,68,68,0.2)", borderRadius: 8, textAlign: "center" }}>
-            <p style={{ fontSize: 13, color: "#ef4444", fontFamily: sans, fontWeight: 600 }}>Pattern: Resignations and settlements — but no criminal charges for any powerful associate.</p>
-            <p style={{ fontSize: 11, color: "#888", fontFamily: sans, marginTop: 4 }}>Corporations paid fines. Individuals resigned quietly. The only person convicted was the one woman prosecutors chose to charge.</p>
+          <div style={{ marginTop: 16, padding: 14, background: "rgba(255,68,68,0.05)", border: "1px solid rgba(255,68,68,0.25)", borderRadius: 8, textAlign: "center" }}>
+            <p style={{ fontSize: 13, color: "#ff4444", fontFamily: sans, fontWeight: 700 }}>🚨 Feb 19, 2026: The pattern just broke. Andrew Mountbatten-Windsor — a former member of the British royal family — was arrested.</p>
+            <p style={{ fontSize: 11, color: "#888", fontFamily: sans, marginTop: 4 }}>For years the pattern was: resignations and settlements — but no criminal charges for the powerful. Maxwell convicted. Guards got plea deals. Now, for the first time, a major public figure faces criminal arrest. UK is moving. Will the US follow?</p>
           </div>
         </div>
       </div>
